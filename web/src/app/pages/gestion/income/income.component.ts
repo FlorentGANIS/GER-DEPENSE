@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
 export class IncomeComponent {
   breadCrumbItems!: Array<{}>; incomes: any[] = []; msg: string = ''; incomeForm!: FormGroup;
 
-  is_processing: boolean = false; p: number = 1; successMessage = ''; display: boolean = false; to_edit: boolean = false;
+  is_processing: boolean = false; p: number = 1; message = ''; display: boolean = false; to_edit: boolean = false;
 
   constructor(private fb: FormBuilder, private income_service: IncomeService, private modalService: NgbModal,
      private toastr: ToastrService, private ngxLoader: NgxUiLoaderService) { }
@@ -30,14 +30,15 @@ export class IncomeComponent {
       label: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]]
     });
 
-    this.getIncomes();
+    this.listIncomes();
   }
 
-  getIncomes() {
+  listIncomes() {
     this.startLoader();
     this.income_service.list().subscribe({
       next: (v: any) => {
         this.incomes = v.data;
+        console.log(this.incomes)
         this.stopLoader();
 
       },
@@ -75,7 +76,7 @@ export class IncomeComponent {
           if (this.incomeForm.value.id !== null || this.incomeForm.value.id !== '') {
             this.modalService.dismissAll();
           }
-          this.getIncomes();
+          this.listIncomes();
           this.is_processing = false;
 
         } else {
@@ -137,7 +138,7 @@ export class IncomeComponent {
             this.msg = res.message;
             if (res.status == 200) {
               this.showSuccess(this.msg);
-              this.getIncomes();
+              this.listIncomes();
               this.stopLoader();
             } else {
               this.showError(this.msg);
@@ -153,6 +154,59 @@ export class IncomeComponent {
         });
       }
     });
+  }
+
+  confirmChangeStatusIncome(income: any) {
+    let testResponse = '';
+    if (income?.status == 1) {
+      testResponse = 'Êtes-vous sûr de vouloir désactiver la source de revenu '+ income?.label +' ?';
+    }
+    if (income?.status == 0) {
+      testResponse = 'Êtes-vous sûr de vouloir activer la source de revenu '+ income?.label +' ?';
+    }
+    Swal.fire({
+      title: 'Confirmation !',
+      text: testResponse,
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Annuler',
+      confirmButtonColor: '#34c38f',
+      cancelButtonColor: '#f46a6a',
+      confirmButtonText: 'Oui'
+    }).then(result => {
+      if (result.value) {
+        this.startLoader();
+        this.changeIncomeStatus(income);
+      }
+    });
+    
+  }
+
+  changeIncomeStatus(income_id: any) {
+    this.is_processing = true;
+    this.income_service.changeIncomeStatus({ 'id': income_id }).subscribe(
+      {
+        next: (v: any) => {
+          this.message = v.message;
+          if (v.status == 200) {
+            this.showSuccess(this.message);
+            this.listIncomes();
+            this.is_processing = false;
+          } else {
+            this.showError(this.message);
+            this.is_processing = false;
+          }
+
+        },
+
+        error: (e) => {
+          console.error(e);
+        },
+
+        complete: () => {
+        }
+
+      });
   }
 
 }

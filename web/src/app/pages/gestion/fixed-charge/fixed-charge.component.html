@@ -1,1 +1,213 @@
-<p>fixed-charge works!</p>
+<!-- start page title -->
+<app-pagetitle title="Liste des charges fixes"
+    [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="row align-items-center">
+    <div class="col-md-6">
+        <div class="mb-3">
+            <h5 class="card-title"> <span class="text-muted fw-normal ms-2">{{
+                    fixed_charges.length }} enregistrements</span></h5>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div
+            class="d-flex flex-wrap align-items-center justify-content-end gap-2 mb-3">
+            <div>
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active"
+                            data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="List"><i class="bx bx-list-ul"></i></a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" routerLink="/apps/user-grid"
+                            data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="Grid"><i class="bx bx-grid-alt"></i></a>
+                    </li> -->
+                </ul>
+            </div>
+            <div>
+                <a href="javascript:void(0);" class="btn btn-light"
+                    (click)="openModal(content, false)"><i
+                        class="bx bx-plus me-1"></i>
+                    Nouveau</a>
+            </div>
+            <ng-template #content role="document" let-modal>
+                <div class="modal-header">
+                    <div *ngIf="is_processing"
+                        class="spinner-border text-primary m-1" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <h5 class="modal-title mt-0">{{ (!to_edit) ? 'Ajout' :
+                        'Modification' }} d'une charge fixe</h5>
+                    <button type="button" class="btn-close" aria-hidden="true"
+                        (click)="modal.dismiss('Cross click')"></button>
+                </div>
+                <div class="modal-body">
+                    <form (ngSubmit)="saveFixedCharge()"
+                        [formGroup]="charge_form">
+                        <div class="row">
+                            <input type="hidden" formControlName="id">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="control-label">Désignation
+                                        <span
+                                            class="required_color">*</span></label>
+                                    <input class="form-control"
+                                        placeholder="Entrer la désignation"
+                                        type="text"
+                                        formControlName="designation"
+                                        [ngClass]="{'is-invalid': charge_form.get('designation')?.touched && !charge_form.get('designation')?.valid}" />
+
+                                    @if(charge_form.get('designation')?.touched &&
+                                    !charge_form.get('designation')?.valid){
+                                    <div class="invalid-feedback">
+                                        @if(charge_form.get('designation')?.touched
+                                        &&
+                                        charge_form.get('designation')?.hasError('required')){
+                                        <span>La désignation est
+                                            requise.</span>}
+
+                                        @if(charge_form.get('designation')?.touched
+                                        &&
+                                        charge_form.get('designation')?.hasError('minlength')){
+                                        <span>Le nombre de caractère minimum est
+                                            4.</span>}
+
+                                        @if(charge_form.get('designation')?.touched
+                                        &&
+                                        charge_form.get('designation')?.hasError('maxlength')){
+                                        <span>Le nombre de caractère maximum est
+                                            50.</span>}
+                                    </div>}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="control-label">Montant
+                                        <span
+                                            class="required_color">*</span></label>
+                                    <input class="form-control"
+                                        placeholder="Entrer le montant"
+                                        type="number"
+                                        formControlName="fixed_amount"
+                                        [ngClass]="{'is-invalid': charge_form.get('fixed_amount')?.touched && !charge_form.get('fixed_amount')?.valid}" />
+
+                                    @if(charge_form.get('fixed_amount')?.touched &&
+                                    !charge_form.get('fixed_amount')?.valid){
+                                    <div class="invalid-feedback">
+                                        @if(charge_form.get('fixed_amount')?.touched
+                                        &&
+                                        charge_form.get('fixed_amount')?.hasError('required')){
+                                        <span>Le montant de la charge est
+                                            requis.</span>}
+                                        
+                                    </div>}
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="text-end ">
+                            <button type="button"
+                                style="margin-right: 10px !important;"
+                                (click)="resetForm()"
+                                class="btn btn-danger waves-effect waves-light">Annuler</button>
+                            <button type="submit"
+                                class="btn btn-success waves-effect waves-light"
+                                [disabled]="!charge_form.valid || is_processing">{{
+                                (!to_edit) ? 'Ajouter' : 'Modifier' }}</button>
+                        </div>
+                    </form>
+                </div>
+            </ng-template>
+
+        </div>
+
+    </div>
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-sm-12">
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table ngxUiLoaderBlurred [loaderId]="'loader-spin'"
+                class="table table-striped align-middle datatable dt-responsive table-check nowrap datatables"
+                style="border-collapse: collapse; border-spacing: 0 8px; width: 100%;">
+
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 40%">Désignations</th>
+                        <th style="width: 20%">Montants</th>
+                        <th style="width: 15%">Statuts</th>
+                        <th style="width: 15%">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="fixed_charges?.length === 0">
+                        <tr>
+                            <td colspan="5">Aucune charge fixe
+                                trouvée.</td>
+                        </tr>
+                    </ng-container>
+                    <tr
+                        *ngFor="let f_charges of fixed_charges | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+                        <td>
+                            {{i + 1}}
+                        </td>
+                        <td>
+                            {{f_charges?.designation}}
+                        </td>
+                        <td>
+                            {{f_charges?.fixed_amount | currency: 'XOF'}}
+                        </td>
+                        <td>
+                            <span
+                                class="badge bg-{{f_charges.status ? 'success' : 'danger'}} ms-1">{{f_charges?.status
+                                ? 'Actif' : 'Inactif'}}</span>
+                        </td>
+                        <td>
+                            <div class="dropdown" ngbDropdown>
+                                <button
+                                    class="btn btn-link font-size-16 shadow-none py-0 text-muted dropdown-toggle"
+                                    type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false" ngbDropdownToggle>
+                                    <i
+                                        class="bx bx-dots-horizontal-rounded"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end"
+                                    ngbDropdownMenu>
+                                    <li><a class="dropdown-item"
+                                            (click)="openModal(content, true, f_charges)">Modifier</a></li>
+                                    <li><a class="dropdown-item"
+                                            (click)="confirmChangeStatusIncome(f_charges)">{{
+                                            f_charges?.status ? 'Désactiver charge'
+                                            : 'Activer charge' }}</a></li>
+                                    <li><a class="dropdown-item"
+                                            (click)="confirm(f_charges)">Supprimer</a></li>
+                                </ul>
+                            </div>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+            <div class="pagination-style">
+                <pagination-controls previousLabel="Précédent"
+                    nextLabel="Suivant"
+                    (pageChange)="p = $event"></pagination-controls>
+
+            </div>
+
+            <ngx-ui-loader overlayColor="rgba(225,220,220,0.8)" [bgsOpacity]="3"
+                [loaderId]="'loader-spin'"></ngx-ui-loader>
+
+        </div>
+        <!-- End table -->
+
+    </div>
+</div>

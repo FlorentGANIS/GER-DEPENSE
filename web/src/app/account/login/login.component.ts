@@ -5,6 +5,7 @@ import { LAYOUT_MODE } from '../../layouts/layouts.model';
 import { AuthService } from 'src/app/shared/authentication/auth.service';
 import { AuthStateService } from 'src/app/shared/authentication/auth-state.service';
 import { TokenService } from 'src/app/shared/authentication/token.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -16,20 +17,19 @@ import { TokenService } from 'src/app/shared/authentication/token.service';
  * Login Component
  */
 export class LoginComponent implements OnInit {
-  isProcessing: boolean = false; message: string = '';
+  is_processing: boolean = false; message: string = '';
   // set the currenr year
   year: number = new Date().getFullYear();
   // Carousel navigation arrow show
   showNavigationArrows: any;
-  loginForm!: FormGroup;
+  login_form!: FormGroup;
   submitted = false;
   error = '';
   returnUrl!: string;
   layout_mode!: string;
   fieldTextType!: boolean;
 
-  constructor(private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
+  constructor(private formBuilder: FormBuilder, private toastr: ToastrService,
     private router: Router, private authService: AuthService,
      private authState: AuthStateService, private tokenService: TokenService,
     //private authenticationService: AuthenticationService,
@@ -47,12 +47,12 @@ export class LoginComponent implements OnInit {
       document.body.setAttribute("data-bs-theme", "dark");
     }
 
-    this.loginForm = this.formBuilder.group({
+    this.login_form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]],
       password: ['', [Validators.required]],
     });
     //Validation Set
-    // this.loginForm = this.formBuilder.group({
+    // this.login_form = this.formBuilder.group({
     //   email: ['admin@themesbrand.com', [Validators.required, Validators.email]],
     //   password: ['123456', [Validators.required]],
     // });
@@ -62,40 +62,40 @@ export class LoginComponent implements OnInit {
   }
 
   // convenience getter for easy access to form fields
-  get f() { return this.loginForm.controls; }
+  get f() { return this.login_form.controls; }
 
   /**
    * Form submit
    */
   onSubmit() {
-    if (this.loginForm.invalid) {
+    if (this.login_form.invalid) {
       
     } else {
-      this.isProcessing = true;
-      this.authService.login(this.loginForm.value).subscribe({
+      this.is_processing = true;
+      this.authService.login(this.login_form.value).subscribe({
         next: (v: any) => {
           if (v.status == 200) {
             this.message = v.message;
-            //this.showSuccess(this.message);
+            this.showSuccessViaToast(this.message);
             this.tokenService.handleToken(v.access_token);
             this.authState.changeAuthStatus(true);  
-            this.isProcessing = false;
-            this.router.navigate(['dashboard']);          
-            this.loginForm.reset();
+            this.is_processing = false;
+            this.router.navigate(['/gestion/dashboard']);          
+            this.login_form.reset();
 
           }else{
             this.message = v.message;
-            this.loginForm.patchValue({
+            this.login_form.patchValue({
               password: ''
             });
-            //this.showError(this.message);
-            this.isProcessing = false;
+            this.showErrorViaToast(this.message);
+            this.is_processing = false;
           }      
 
         },
         error: (error: any) => {
           this.error = 'Impossible de valider vos identifiants. Veuillez réessayer.';
-          this.isProcessing = false;
+          this.is_processing = false;
         },
         complete: () => {
         },
@@ -104,7 +104,7 @@ export class LoginComponent implements OnInit {
     // this.submitted = true;
 
     // // stop here if form is invalid
-    // if (this.loginForm.invalid) {
+    // if (this.login_form.invalid) {
     //   return;
     // } else {
     //   if (environment.defaultauth === 'firebase') {
@@ -126,6 +126,14 @@ export class LoginComponent implements OnInit {
     //         });
     //   }
     // }
+  }
+
+  showSuccessViaToast(msg: any) {
+    this.toastr.success("Succès", msg)
+  }
+
+  showErrorViaToast(msg: any) {
+    this.toastr.error("Echec", msg)
   }
 
   /**

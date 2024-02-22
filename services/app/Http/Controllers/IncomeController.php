@@ -18,7 +18,7 @@ class IncomeController extends Controller
     public function list()
     {
         try{
-            $data = Income::where('create_id', auth()->user()->id)->where('status', true)->orderBy('label', 'asc')->get();
+            $data = Income::where('create_id', auth()->user()->id)->orderBy('label', 'asc')->get();
             return response()->json([
                 'data' => $data,
                 'message' => 'Liste des sources de revenus',

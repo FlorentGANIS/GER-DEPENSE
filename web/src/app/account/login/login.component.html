@@ -5,63 +5,91 @@
                 <div class="auth-full-page-content d-flex p-sm-5 p-4">
                     <div class="w-100">
                         <div class="d-flex flex-column h-100">
-                            <div class="mb-4 mb-md-5 text-center">
+                            <div class="mb-3 mb-md-4 text-center">
                                 <a routerLink="/" class="d-block auth-logo">
                                     <img src="assets/images/logo-sm.svg" alt="" height="28"> <span class="logo-txt">GER'DEPENSE</span>
                                 </a>
                             </div>
+
+                            <div class="mb-md-1 text-center" *ngIf="is_processing">
+                                <div class="spinner-border text-primary m-1" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+
                             <div class="auth-content my-auto">
                                 <div class="text-center">
                                     <h5 class="mb-0">Bienvenue !</h5>
                                     <p class="text-muted mt-2">Connexion à GER'DEPENSE.</p>
                                 </div>
-                                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                                <form [formGroup]="login_form" (ngSubmit)="onSubmit()">
 
                                     <div class="mb-3">
-                                        <label for="email">Email</label>
-                                        <input type="email" class="form-control" id="email" formControlName="email" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" placeholder="Enter email">
-                                        @if(submitted && f.email.errors){
+                                        <label for="email">Adresse
+                                            mail</label>
+                                        <input type="text"
+                                            formControlName="email"
+                                            class="form-control" id="email"
+                                            [ngClass]="{'is-invalid': login_form.get('email')?.touched && !login_form.get('email')?.valid}"
+                                            placeholder="Entrer l'adresse mail">
+                                        @if(login_form.get('email')?.touched
+                                        &&
+                                        !login_form.get('email')?.valid){
                                         <div class="invalid-feedback">
-                                            @if(f.email.errors.required){
-                                            <div>Email is required</div>}
-                                            @if(f.email.errors.email){
-                                            <div>Email must be a valid email address
-                                            </div>}
+                                            @if(login_form.get('email')?.touched
+                                            &&
+                                            login_form.get('email')?.hasError('required')){
+                                            <span>L'adresse mail est
+                                                obligatoire.</span>}
+
+                                            @if(login_form.get('email')?.touched
+                                            &&
+                                            login_form.get('email')?.hasError('pattern')){
+                                            <span>Entrer une adresse mail
+                                                valide</span>}
+
+                                        </div>}
+
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label
+                                            for="password">Mot de
+                                            passe</label>
+                                        <input type="password"
+                                            formControlName="password"
+                                            [ngClass]="{ 'is-invalid': login_form.get('password')?.touched && !login_form.get('password')?.valid }"
+                                            class="form-control"
+                                            id="password"
+                                            placeholder="Enter le mot de passe">
+                                        @if(login_form.get('password')?.touched
+                                        &&
+                                        !login_form.get('password')?.valid){
+                                        <div class="invalid-feedback">
+                                            @if(login_form.get('password')?.touched
+                                            &&
+                                            login_form.get('password')?.hasError('required')){
+                                            <span>Votre mot de passe est
+                                                obligatoire</span>}
+
                                         </div>}
                                     </div>
 
-                                    <div class="mb-3">
-                                        <div class="float-end">
-                                            <a routerLink="/account/recoverpw" class="text-muted">Forgot
-                                                password?</a>
-                                        </div>
-                                        <label for="userpassword">Password</label>
-                                        <div class="input-group auth-pass-inputgroup">
-                                            <input [type]="fieldTextType ? 'text' : 'password'" class="form-control" formControlName="password" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" placeholder="Enter password" aria-label="Password" aria-describedby="password-addon">
-                                            <button class="btn btn-light " type="button" id="password-addon"><i class="mdi" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType
-                                                      }" (click)="toggleFieldTextType()"></i></button>
-                                            @if(submitted && f.password.errors){
-                                            <div class="invalid-feedback">
-                                                @if(f.password.errors.required){
-                                                <span>Password is required</span>}
-                                            </div>}
-                                        </div>
-                                    </div>
-
-                                    <div class="form-check">
+                                    <!-- <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="remember-check">
                                         <label class="form-check-label" for="remember-check">
                                             Remember me
                                         </label>
-                                    </div>
+                                    </div> -->
 
                                     <div class="mt-3 d-grid">
-                                        <button class="btn btn-primary btn-block" type="submit">Log In</button>
+                                        <button class="btn btn-primary btn-block" [disabled]="!login_form.valid || is_processing"
+                                        type="submit">Se connecter</button>
                                     </div>
 
                                 </form>
 
-                                <div class="mt-4 pt-2 text-center">
+                                <!-- <div class="mt-4 pt-2 text-center">
                                     <div class="signin-other-title">
                                         <h5 class="font-size-14 mb-3 text-muted fw-medium">- Sign in with -</h5>
                                     </div>
@@ -83,16 +111,15 @@
                                             </a>
                                         </li>
                                     </ul>
-                                </div>
+                                </div> -->
 
                                 <div class="mt-5 text-center">
-                                    <p class="text-muted mb-0">Don't have an account ? <a routerLink="/account/register" class="text-primary fw-semibold"> Signup now </a> </p>
+                                    <p class="text-muted mb-0">Vous n'avez pas de compte ? <a routerLink="/register" class="text-primary fw-semibold"> Créer un compte </a> </p>
                                 </div>
                             </div>
                             <div class="mt-4 mt-md-5 text-center">
                                 <p class="mb-0">©
-                                    {{year}} Minia . Crafted with <i class="mdi mdi-heart text-danger"></i> by
-                                    Themesbrand
+                                    {{year}} GER'DEPENSE 
                                 </p>
                             </div>
                         </div>
