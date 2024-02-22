@@ -1,0 +1,483 @@
+<div class="auth-page">
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <div class="col-xxl-3 col-lg-4 col-md-5">
+                <div class="auth-full-page-content d-flex p-sm-5 p-4">
+                    <div class="w-100">
+                        <div class="d-flex flex-column h-100">
+                            <div class="mb-3 mb-md-4 text-center">
+                                <a routerLink="/" class="d-block auth-logo">
+                                    <img src="assets/images/logo-sm.svg" alt
+                                        height="28"> <span
+                                        class="logo-txt">GER'DEPENSE</span>
+                                </a>
+                            </div>
+                            
+                            <div class="mb-md-1 text-center" *ngIf="is_processing">
+                                <div class="spinner-border text-primary m-1" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+
+                            <div class="auth-content my-auto">
+                                <div class="text-center">
+                                    <h5 class="mb-0">Création de compte</h5>
+                                    <p class="text-muted mt-2">Créer votre
+                                        compte pour suivre vos dépenses.</p>
+                                </div>
+                                <form [formGroup]="register_form"
+                                    (ngSubmit)="register()">
+
+                                    <ng-container class="mb-2">
+                                        <div class="mb-3">
+                                            <label for="email">Adresse
+                                                mail</label>
+                                            <input type="text"
+                                                formControlName="email"
+                                                class="form-control" id="email"
+                                                [ngClass]="{'is-invalid': register_form.get('email')?.touched && !register_form.get('email')?.valid}"
+                                                placeholder="Entrer l'adresse mail">
+                                            @if(register_form.get('email')?.touched
+                                            &&
+                                            !register_form.get('email')?.valid){
+                                            <div class="invalid-feedback">
+                                                @if(register_form.get('email')?.touched
+                                                &&
+                                                register_form.get('email')?.hasError('required')){
+                                                <span>L'adresse mail est
+                                                    obligatoire.</span>}
+
+                                                @if(register_form.get('email')?.touched
+                                                &&
+                                                register_form.get('email')?.hasError('pattern')){
+                                                <span>Entrer une adresse mail
+                                                    valide</span>}
+
+                                            </div>}
+
+                                        </div>
+                                        <div class="mt-4 d-grid">
+                                            <button
+                                                class="btn btn-primary btn-block" (click)="sendEmailVerificationCode()"
+                                                [disabled]="is_processing || email_valid || register_form.get('email')?.value == ''"
+                                                type="button">Envoyer</button>
+                                        </div>
+                                    </ng-container>
+
+                                    <!-- Code de vérification -->
+
+                                    <ng-container
+                                        *ngIf="email_sent && display_confirmation">
+                                        <div class="mb-3">
+                                            <label for="code_verification">Code
+                                                de vérification</label>
+                                            <input type="text"
+                                                formControlName="code_verification"
+                                                class="form-control"
+                                                id="code_verification"
+                                                [ngClass]="{'is-invalid': register_form.get('code_verification')?.touched && !register_form.get('code_verification')?.valid}"
+                                                placeholder="Entrer l'adresse mail">
+                                            @if(register_form.get('code_verification')?.touched
+                                            &&
+                                            !register_form.get('code_verification')?.valid){
+                                            <div class="invalid-feedback">
+                                                @if(register_form.get('code_verification')?.touched
+                                                &&
+                                                register_form.get('code_verification')?.hasError('required')){
+                                                <span>Le code de vérification
+                                                    est
+                                                    obligatoire.</span>}
+
+                                            </div>}
+
+                                        </div>
+                                        <div class="mt-4 d-grid">
+                                            <button
+                                                class="btn btn-primary btn-block" (click)="verifyCode()"
+                                                [disabled]="is_processing"
+                                                type="button">Vérifier</button>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <button type="button" (click)="resendEmailVerificationCode()"
+                                                class="btn btn-link waves-effect">Renvoyer
+                                                le code</button>
+                                        </div>
+                                    </ng-container>
+
+                                    <!-- Fin Code de vérification -->
+
+                                    <ng-container *ngIf="email_valid">
+                                        <!-- User information -->
+
+                                        <div class="mb-3">
+                                            <label for="last_name">Nom</label>
+                                            <input type="text"
+                                                formControlName="last_name"
+                                                class="form-control"
+                                                id="last_name"
+                                                [ngClass]="{'is-invalid': register_form.get('last_name')?.touched && !register_form.get('last_name')?.valid}"
+                                                placeholder="Entrer l'adresse mail">
+                                            @if(register_form.get('last_name')?.touched
+                                            &&
+                                            !register_form.get('last_name')?.valid){
+                                            <div class="invalid-feedback">
+                                                @if(register_form.get('last_name')?.touched
+                                                &&
+                                                register_form.get('last_name')?.hasError('required')){
+                                                <span>Votre nom est
+                                                    obligatoire.</span>}
+
+                                                @if(register_form.get('last_name')?.touched
+                                                &&
+                                                register_form.get('last_name')?.hasError('minlength')){
+                                                <span>Le nombre de caractère
+                                                    minimum
+                                                    est
+                                                    3.</span>}
+
+                                                @if(register_form.get('last_name')?.touched
+                                                &&
+                                                register_form.get('last_name')?.hasError('maxlength')){
+                                                <span>Le nombre de caractère
+                                                    maximum
+                                                    est
+                                                    30.</span>}
+
+                                            </div>}
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="first_name">Nom</label>
+                                            <input type="text"
+                                                formControlName="first_name"
+                                                class="form-control"
+                                                id="first_name"
+                                                [ngClass]="{'is-invalid': register_form.get('first_name')?.touched && !register_form.get('first_name')?.valid}"
+                                                placeholder="Entrer l'adresse mail">
+                                            @if(register_form.get('first_name')?.touched
+                                            &&
+                                            !register_form.get('first_name')?.valid){
+                                            <div class="invalid-feedback">
+                                                @if(register_form.get('first_name')?.touched
+                                                &&
+                                                register_form.get('first_name')?.hasError('required')){
+                                                <span>Votre nom est
+                                                    obligatoire.</span>}
+
+                                                @if(register_form.get('first_name')?.touched
+                                                &&
+                                                register_form.get('first_name')?.hasError('minlength')){
+                                                <span>Le nombre de caractère
+                                                    minimum
+                                                    est
+                                                    3.</span>}
+
+                                                @if(register_form.get('first_name')?.touched
+                                                &&
+                                                register_form.get('first_name')?.hasError('maxlength')){
+                                                <span>Le nombre de caractère
+                                                    maximum
+                                                    est
+                                                    50.</span>}
+
+                                            </div>}
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label
+                                                for="password">Mot de
+                                                passe</label>
+                                            <input type="password"
+                                                formControlName="password"
+                                                [ngClass]="{ 'is-invalid': register_form.get('password')?.touched && !register_form.get('password')?.valid }"
+                                                class="form-control"
+                                                id="password"
+                                                placeholder="Enter le mot de passe">
+                                            @if(register_form.get('password')?.touched
+                                            &&
+                                            !register_form.get('password')?.valid){
+                                            <div class="invalid-feedback">
+                                                @if(register_form.get('password')?.touched
+                                                &&
+                                                register_form.get('password')?.hasError('required')){
+                                                <span>Votre mot de passe est
+                                                    obligatoire</span>}
+
+                                            </div>}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label
+                                                for="password_confirmation">Confirmation
+                                                du mot de passe</label>
+                                            <input type="password_confirmation"
+                                                formControlName="password_confirmation"
+                                                [ngClass]="{ 'is-invalid': register_form.get('password_confirmation')?.touched && !register_form.get('password_confirmation')?.valid }"
+                                                class="form-control"
+                                                id="password_confirmation"
+                                                placeholder="Enter le mot de passe">
+                                            @if(register_form.get('password_confirmation')?.touched
+                                            &&
+                                            !register_form.get('password_confirmation')?.valid){
+                                            <div class="invalid-feedback">
+                                                @if(register_form.get('password_confirmation')?.touched
+                                                &&
+                                                register_form.get('password_confirmation')?.hasError('required')){
+                                                <span>Votre mot de passe de
+                                                    confirmation est
+                                                    obligatoire</span>}
+
+                                            </div>}
+                                        </div>
+
+                                        <div class="mt-4 d-grid">
+                                            <button
+                                                class="btn btn-primary btn-block" (click)="register()"
+                                                [disabled]="!register_form.valid || is_processing"
+                                                type="submit">S'inscrire</button>
+                                        </div>
+
+                                        <!-- End User information -->
+                                    </ng-container>
+
+                                </form>
+
+                                <!-- <div class="mt-4 pt-2 text-center">
+                                    <div class="signin-other-title">
+                                        <h5
+                                            class="font-size-14 mb-3 text-muted fw-medium">-
+                                            Sign up using -</h5>
+                                    </div>
+
+                                    <ul class="list-inline mb-0">
+                                        <li class="list-inline-item">
+                                            <a href="javascript:void()"
+                                                class="social-list-item bg-primary text-white border-primary">
+                                                <i class="mdi mdi-facebook"></i>
+                                            </a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a href="javascript:void()"
+                                                class="social-list-item bg-info text-white border-info">
+                                                <i class="mdi mdi-twitter"></i>
+                                            </a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a href="javascript:void()"
+                                                class="social-list-item bg-danger text-white border-danger">
+                                                <i class="mdi mdi-google"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div> -->
+
+                                <div class="mt-5 text-center">
+                                    <p class="text-muted mb-0">Vous avez déjà un
+                                        compte ? <a routerLink="/account/login"
+                                            class="text-primary fw-semibold">
+                                            Se connecter </a> </p>
+                                </div>
+                            </div>
+                            <div class="mt-4 mt-md-5 text-center">
+                                <p class="mb-0">©
+                                    {{year}} GER'DEPENSE
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end auth full page content -->
+            </div>
+            <!-- end col -->
+            <div class="col-xxl-9 col-lg-8 col-md-7">
+                <div class="auth-bg pt-md-5 p-4 d-flex">
+                    <div class="bg-overlay bg-primary"></div>
+                    <ul class="bg-bubbles">
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                    <!-- end bubble effect -->
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col-xl-7">
+                            <div class="p-0 p-sm-4 px-xl-0">
+                                <div id="reviewcarouselIndicators"
+                                    class="carousel slide"
+                                    data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <ngb-carousel
+                                            [showNavigationArrows]="showNavigationArrows">
+                                            <ng-template ngbSlide>
+                                                <div
+                                                    class="carousel-item active">
+                                                    <div
+                                                        class="testi-contain text-white">
+                                                        <i
+                                                            class="bx bxs-quote-alt-left text-success display-6"></i>
+
+                                                        <h4
+                                                            class="mt-4 fw-medium lh-base text-white">“I
+                                                            feel confident
+                                                            imposing change
+                                                            on myself. It's a
+                                                            lot more progressing
+                                                            fun than looking
+                                                            back.
+                                                            That's why
+                                                            I ultricies enim
+                                                            at malesuada nibh
+                                                            diam on tortor
+                                                            neaded to throw
+                                                            curve
+                                                            balls.”
+                                                        </h4>
+                                                        <div
+                                                            class="mt-4 pt-3 pb-5">
+                                                            <div
+                                                                class="d-flex align-items-start">
+                                                                <div
+                                                                    class="flex-shrink-0">
+                                                                    <img
+                                                                        src="assets/images/users/avatar-1.jpg"
+                                                                        class="avatar-md img-fluid rounded-circle"
+                                                                        alt="...">
+                                                                </div>
+                                                                <div
+                                                                    class="flex-grow-1 ms-3 mb-4">
+                                                                    <h5
+                                                                        class="font-size-18 text-white">Richard
+                                                                        Drews
+                                                                    </h5>
+                                                                    <p
+                                                                        class="mb-0 text-white-50">Web
+                                                                        Designer</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                            <ng-template ngbSlide>
+                                                <div
+                                                    class="carousel-item active">
+                                                    <div
+                                                        class="testi-contain text-white">
+                                                        <i
+                                                            class="bx bxs-quote-alt-left text-success display-6"></i>
+
+                                                        <h4
+                                                            class="mt-4 fw-medium lh-base text-white">“Our
+                                                            task must be
+                                                            to
+                                                            free ourselves by
+                                                            widening our circle
+                                                            of compassion to
+                                                            embrace
+                                                            all living
+                                                            creatures and
+                                                            the whole of quis
+                                                            consectetur nunc sit
+                                                            amet semper justo.
+                                                            nature
+                                                            and its
+                                                            beauty.”</h4>
+                                                        <div
+                                                            class="mt-4 pt-3 pb-5">
+                                                            <div
+                                                                class="d-flex align-items-start">
+                                                                <div
+                                                                    class="flex-shrink-0">
+                                                                    <img
+                                                                        src="assets/images/users/avatar-2.jpg"
+                                                                        class="avatar-md img-fluid rounded-circle"
+                                                                        alt="...">
+                                                                </div>
+                                                                <div
+                                                                    class="flex-grow-1 ms-3 mb-4">
+                                                                    <h5
+                                                                        class="font-size-18 text-white">Rosanna
+                                                                        French
+                                                                    </h5>
+                                                                    <p
+                                                                        class="mb-0 text-white-50">Web
+                                                                        Developer</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                            <ng-template ngbSlide>
+                                                <div
+                                                    class="carousel-item active">
+                                                    <div
+                                                        class="testi-contain text-white">
+                                                        <i
+                                                            class="bx bxs-quote-alt-left text-success display-6"></i>
+
+                                                        <h4
+                                                            class="mt-4 fw-medium lh-base text-white">“I've
+                                                            learned that
+                                                            people will forget
+                                                            what you said,
+                                                            people will forget
+                                                            what
+                                                            you
+                                                            did,
+                                                            but people will
+                                                            never forget
+                                                            how donec in
+                                                            efficitur lectus,
+                                                            nec lobortis metus
+                                                            you made
+                                                            them
+                                                            feel.”</h4>
+                                                        <div
+                                                            class="mt-4 pt-3 pb-5">
+                                                            <div
+                                                                class="d-flex align-items-start">
+                                                                <img
+                                                                    src="assets/images/users/avatar-3.jpg"
+                                                                    class="avatar-md img-fluid rounded-circle"
+                                                                    alt="...">
+                                                                <div
+                                                                    class="flex-1 ms-3 mb-4">
+                                                                    <h5
+                                                                        class="font-size-18 text-white">Ilse
+                                                                        R. Eaton
+                                                                    </h5>
+                                                                    <p
+                                                                        class="mb-0 text-white-50">Manager
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </ngb-carousel>
+                                    </div>
+                                    <!-- end carousel-inner -->
+                                </div>
+                                <!-- end review carousel -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end container fluid -->
+</div>
