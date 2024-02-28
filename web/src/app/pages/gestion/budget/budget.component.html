@@ -1,14 +1,64 @@
 <!-- start page title -->
-<app-pagetitle title="Liste des budgets de l'année 2024"
+<app-pagetitle title="Liste des budgets de l'année {{ year }}"
     [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
 <!-- end page title -->
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Création du {{ curr_name }}</h4>
+                
+            </div>
+            <div class="card-body p-4">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="formrow-email-input">Email</label>
+                                            <input type="email" class="form-control" id="formrow-email-input">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="formrow-password-input">Password</label>
+                                            <input type="email" class="form-control" id="formrow-email-input">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="formrow-password-input">B</label>
+                                            <button type="button" class="btn btn-primary w-md">Supprimer</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="mt-4">
+                                    <button type="button" class="btn btn-primary w-md">Ajouter revenu</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                   
+                </div>
+
+              
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row">
     <ng-container *ngFor="let budget of budgets">
         <div class="col-xl-3 col-sm-6">
             <div class="card text-center">
                 <div class="card-header bg-transparent border-bottom">
-                    <h5>{{ budget?.budget_name }} </h5>
+                    <h5><i class="mdi mdi-bullseye-arrow me-3" *ngIf="true_current_month == budget?.month_id"></i>{{ budget?.budget_name }} </h5>
                 </div>
                 <div class="card-body">
 
@@ -50,12 +100,12 @@
                     <button type="button" *ngIf="budget?.status"
                         title="Répartir le budget"
                         [routerLink]="['/gestion/distribution/budget', budget?.budget_id]"
-                        class="btn btn-outline-light text-truncate"><i
+                        class="btn btn-outline-dark text-truncate"><i
                             class="uil uil-user me-1"></i>
                         Répartir</button>
                     <button type="button"
                         title="{{budget?.status ? 'Détails du budget' : 'Créer le budget'}}"
-                        class="btn btn-outline-light text-truncate"><i
+                        class="btn btn-outline-dark text-truncate"><i
                             class="uil uil-envelope-alt me-1"></i>
                         {{budget?.status == 0 ? 'Créer' : 'Détails'}}</button>
 
