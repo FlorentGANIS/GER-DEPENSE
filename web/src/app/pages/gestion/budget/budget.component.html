@@ -1,1 +1,85 @@
-<p>budget works!</p>
+<!-- start page title -->
+<app-pagetitle title="Liste des budgets de l'année 2024"
+    [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="row">
+    <ng-container *ngFor="let budget of budgets">
+        <div class="col-xl-3 col-sm-6">
+            <div class="card text-center">
+                <div class="card-header bg-transparent border-bottom">
+                    <h5>{{ budget?.budget_name }} </h5>
+                </div>
+                <div class="card-body">
+
+                    <div
+                        style="margin-left: auto !important; margin-right: auto; margin-bottom: 6%;">
+                        <span class="badge bg-danger"
+                            *ngIf="!budget?.status">NON DISPONIBLE</span>
+                        <span class="badge bg-success"
+                            *ngIf="budget?.status && budget?.total_incomes != 0">DISPONIBLE</span>
+                        <span class="badge bg-warning"
+                            *ngIf="budget?.status && budget?.total_incomes == 0">CREE
+                            SANS REPARTITION</span>
+                    </div>
+
+                    <h4 class="font-size-20 mb-4">Solde
+                        : {{
+                        budget?.balance | currency: 'XOF' }}</h4>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6>Total budgétisé</h6>
+                                <span class="text-success"
+                                    style="font-weight: bold;">{{ budget?.total_incomes | currency: 'XOF'}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6>Total dépenses</h6>
+                                <span class="text-danger"
+                                    style="font-weight: bold;">{{ budget?.total_expenses | currency: 'XOF'}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="btn-group" role="group">
+                    <button type="button" *ngIf="budget?.status"
+                        title="Répartir le budget"
+                        [routerLink]="['/gestion/distribution/budget', budget?.budget_id]"
+                        class="btn btn-outline-light text-truncate"><i
+                            class="uil uil-user me-1"></i>
+                        Répartir</button>
+                    <button type="button"
+                        title="{{budget?.status ? 'Détails du budget' : 'Créer le budget'}}"
+                        class="btn btn-outline-light text-truncate"><i
+                            class="uil uil-envelope-alt me-1"></i>
+                        {{budget?.status == 0 ? 'Créer' : 'Détails'}}</button>
+
+                </div>
+            </div>
+            <!-- end card -->
+        </div>
+    </ng-container>
+
+    <!-- end row -->
+
+    <div class="row justify-content-md-between align-items-md-center mt-2">
+        <!-- <div class="col-sm-12 col-md-5">
+        <div class="budgetTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
+            Showing {{startIndex}} - {{endIndex}} of {{totalRecords}}
+        </div>
+    </div> -->
+        <!-- Pagination -->
+        <!-- <div class="col-5">
+        <div class="btn-group float-end">
+            <ngb-pagination class="pagination-rounded" [collectionSize]="totalRecords"
+                (pageChange)="onPageChange($event)" [(page)]="page" [pageSize]="pageSize">
+            </ngb-pagination>
+        </div>
+    </div> -->
+        <!-- End Pagination -->
+    </div>

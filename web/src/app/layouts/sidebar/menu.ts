@@ -12,6 +12,18 @@ export const MENU: MenuItem[] = [
         icon: 'home',
         link: '/dashboard',
     },
+    {
+        id: 76,
+        label: 'Budgets',
+        icon: 'list',
+        link: '/gestion/budgets',
+    },
+    {
+        id: 77,
+        label: 'Dépenses',
+        icon: 'list',
+        link: '/gestion/depenses',
+    },
 
     {
         id: 71,
