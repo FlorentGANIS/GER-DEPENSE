@@ -30,8 +30,7 @@ class BudgetController extends Controller
             }
             $data['months'] = Month::orderBy('month_number')->get();
 
-            //$data['budgets'] = Budget::with(['incomes', 'month'])->where('year_budget', $year)->where('create_id', getUserId())->get();
-            $data['budgets'] = Budget::with(['incomes', 'month'])->where('year_budget', 2023)->get();
+            $data['budgets'] = Budget::with(['incomes', 'month'])->where('year_budget', $year)->where('create_id', getUserId())->get();
             $_data = [];
             foreach ($data['months'] as $month) {
                 $child = [];

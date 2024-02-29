@@ -13,5 +13,5 @@ export const TOPBAR = 'light';
 
 export const SIDEBAR_SIZE = 'default';
 
-export const SIDEBAR_COLOR = 'light';
+export const SIDEBAR_COLOR = 'dark';
 

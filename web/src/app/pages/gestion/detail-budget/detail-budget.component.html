@@ -1,1 +1,136 @@
-<p>detail-budget works!</p>
+<!-- start page title -->
+<app-pagetitle title="Détails d'un budget "
+    [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="col-xl-12">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">{{ budget?.month?.label }} {{ budget?.year_budget }}</h4>
+        </div><!-- end card header -->
+
+        <div class="card-body">
+            <!-- Nav tabs -->
+            <ul ngbNav #customNav="ngbNav" [activeId]="1" class="nav-tabs nav-tabs-custom nav-justified">
+                <li [ngbNavItem]="1">
+                    <a ngbNavLink>
+                        <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                        <span class="d-none d-sm-block">Informations générales</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                        <ng-template [ngTemplateOutlet]="InfoGen"></ng-template>
+                    </ng-template>
+                </li>
+                <li [ngbNavItem]="2">
+                    <a ngbNavLink>
+                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                        <span class="d-none d-sm-block">Sources de revenus</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                        <ng-template [ngTemplateOutlet]="TabContent1"></ng-template>
+                    </ng-template>
+                </li>
+                <li [ngbNavItem]="3">
+                    <a ngbNavLink>
+                        <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                        <span class="d-none d-sm-block">Dépenses</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                        <ng-template [ngTemplateOutlet]="InfoGen"></ng-template>
+                    </ng-template>
+                </li>
+                <li [ngbNavItem]="4">
+                    <a ngbNavLink>
+                        <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                        <span class="d-none d-sm-block">Vue graphique</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                        <ng-template [ngTemplateOutlet]="TabContent1"></ng-template>
+                    </ng-template>
+                </li>
+            </ul>
+            <div [ngbNavOutlet]="customNav" class="text-muted"></div>
+        </div><!-- end card-body -->
+    </div><!-- end card -->
+</div>
+
+
+<ng-template #InfoGen>
+    <div class="row p-3">
+        <div class="col-sm-6 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Montant global</h5>
+                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.global_amount | currency: 'XOF' }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Montant budgétisé</h5>
+                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.total_incomes | currency: 'XOF' }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Montant non budgétisé</h5>
+                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.remaining_amount | currency: 'XOF'
+                    }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card border-danger">
+                <div class="card-body">
+                    <h5 class="card-title">Total des dépenses</h5>
+                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.total_expenses | currency: 'XOF' }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card border-success">
+                <div class="card-body">
+                    <h5 class="card-title">Solde</h5>
+                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.balance | currency: 'XOF' }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Date de création</h5>
+                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.created_at | date: 'dd MMMM yyyy' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="mt-3">
+        <h5 class="mb-3">Catégories de dépenses associées à ce budget :</h5>
+        <div class="px-2">
+            <span class="font-size-20 pe-1"><span class="badge bg-light-subtle text-black">Design</span></span>
+            <span class="font-size-20 pe-1"><span class="badge bg-light-subtle text-black">Development</span></span>
+            <span class="font-size-20 pe-1"><span class="badge bg-light-subtle text-black">Wordpress</span></span>
+            <span class="font-size-20 pe-1"><span class="badge bg-light-subtle text-black">HTML</span></span>
+            <span class="font-size-20 pe-1"><span class="badge bg-light-subtle text-black">Project</span></span>
+        </div>
+    </div>
+
+</ng-template>
+
+<!-- Tab Content -->
+<ng-template #TabContent1>
+    <p class="p-3 mb-0">
+        Food truck fixie locavore, accusamus mcsweeney's marfa nulla
+        single-origin coffee squid. Exercitation +1 labore velit, blog
+        sartorial PBR leggings next level wes anderson artisan four loko
+        farm-to-table craft beer twee. Qui photo booth letterpress,
+        commodo enim craft beer mlkshk aliquip jean shorts ullamco ad
+        vinyl cillum PBR. Homo nostrud organic, assumenda labore
+        aesthetic magna delectus.
+    </p>
+</ng-template>

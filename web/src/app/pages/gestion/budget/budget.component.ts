@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -11,7 +11,7 @@ import { IncomeService } from 'src/app/shared/services/income.service';
   templateUrl: './budget.component.html',
   styleUrl: './budget.component.scss'
 })
-export class BudgetComponent {
+export class BudgetComponent implements OnInit{
   // bread crumb items
   breadCrumbItems!: Array<{}>; is_processing: boolean = false; index_page: number = 0; true_current_month: string = '';
   budgets: any[] = []; budget_form!: FormGroup; incomes: any[] = [];
@@ -32,6 +32,7 @@ export class BudgetComponent {
     ];
 
     this.listBudgets();
+    this.listIncomes();
 
     this.budget_form = this.fb.group({
       id: [''],
@@ -75,6 +76,7 @@ export class BudgetComponent {
       {
         next: (v: any) => {
           this.budgets = v.data;
+          console.log(this.budgets)
           this.index_page = v.index_page;
           this.true_current_month = v.true_current_month.id;
           this.is_processing = false;
@@ -142,6 +144,11 @@ export class BudgetComponent {
       }
     )
 
+  }
+
+  closeForm() {
+    this.display_form = false;
+    this.budget_form.reset();
   }
 
 }

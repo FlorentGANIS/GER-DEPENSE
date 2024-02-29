@@ -3,62 +3,104 @@
     [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
 <!-- end page title -->
 
-<div class="row">
+<div class="row" *ngIf="display_form">
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title">Création du {{ curr_name }}</h4>
-                
+                <div *ngIf="is_processing"
+                    class="spinner-border text-primary m-1" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <h4 class="card-title">Création du {{ curr_name }} {{ year }}</h4>
+
             </div>
             <div class="card-body p-4">
 
                 <div class="row">
                     <div class="col-lg-12">
                         <div>
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-7">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="formrow-email-input">Email</label>
-                                            <input type="email" class="form-control" id="formrow-email-input">
+                            <form class="row gx-3 gy-2 align-items-center"
+                                novalidate
+                                [formGroup]="budget_form">
+
+                                <ng-container formArrayName="incomes"
+                                    *ngFor="let income of incomesList.controls; let i = index">
+                                    <ng-container [formGroupName]="i">
+                                        <div class="col-sm-7 mb-2">
+                                            <label class="visually-hidden"
+                                                for="income_id">Source
+                                                de revenu</label>
+                                            <select
+                                                class="form-control form-select"
+                                                formControlName="income_id"
+                                                [ngClass]="{'is-invalid': incomesList.controls[i].get('income_id')?.touched && !incomesList.controls[i].get('income_id')?.valid}">
+                                                <option value
+                                                    selected>Sélectionner une
+                                                    source de revenu</option>
+                                                <option
+                                                    *ngFor="let income of incomes"
+                                                    value="{{income.id}}">{{income.label}}</option>
+                                            </select>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="formrow-password-input">Password</label>
-                                            <input type="email" class="form-control" id="formrow-email-input">
+                                        <div class="col-sm-3 mb-2">
+                                            <label class="visually-hidden"
+                                                for="income_amount">Montant (F
+                                                CFA)</label>
+                                            <div class="input-group">
+                                                <input type="number"
+                                                    formControlName="income_amount"
+                                                    class="form-control"
+                                                    [ngClass]="{'is-invalid': incomesList.controls[i].get('income_amount')?.touched && !incomesList.controls[i].get('income_amount')?.valid}"
+                                                    id="income_amount"
+                                                    placeholder="Entrez le montant en F CFA">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="formrow-password-input">B</label>
-                                            <button type="button" class="btn btn-primary w-md">Supprimer</button>
+
+                                        <div class="col-auto mb-2">
+                                            <button type="button"
+                                                *ngIf="incomesList.length > 1"
+                                                (click)="deleteIncome(i)"
+                                                class="btn btn-danger">Supprimer</button>
                                         </div>
-                                    </div>
+                                    </ng-container>
+                                </ng-container>
+
+                                <div class="mt-5 mb-3">
+                                    <button type="submit" (click)="addIncome()"
+                                        class="btn btn-primary w-md">Ajouter
+                                        revenu</button>
                                 </div>
 
-
-                                <div class="mt-4">
-                                    <button type="button" class="btn btn-primary w-md">Ajouter revenu</button>
+                                <div class="text-end ">
+                                    <button type="button"
+                                        style="margin-right: 10px !important;"
+                                        (click)="closeForm()"
+                                        class="btn btn-danger waves-effect waves-light">Annuler</button>
+                                    <button
+                                        class="btn btn-success waves-effect waves-light"
+                                        (click)="saveBudget()"
+                                        [disabled]="!budget_form.valid || is_processing">Enregistrer</button>
                                 </div>
                             </form>
+
                         </div>
                     </div>
-                   
+
                 </div>
 
-              
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
+<div class="row" *ngIf="!display_form">
     <ng-container *ngFor="let budget of budgets">
         <div class="col-xl-3 col-sm-6">
             <div class="card text-center">
                 <div class="card-header bg-transparent border-bottom">
-                    <h5><i class="mdi mdi-bullseye-arrow me-3" *ngIf="true_current_month == budget?.month_id"></i>{{ budget?.budget_name }} </h5>
+                    <h5><i class="mdi mdi-bullseye-arrow me-3"
+                            *ngIf="true_current_month == budget?.month_id"></i>{{
+                        budget?.budget_name }} </h5>
                 </div>
                 <div class="card-body">
 
@@ -82,14 +124,18 @@
                             <div class="mb-3">
                                 <h6>Total budgétisé</h6>
                                 <span class="text-success"
-                                    style="font-weight: bold;">{{ budget?.total_incomes | currency: 'XOF'}}</span>
+                                    style="font-weight: bold;">{{
+                                    budget?.total_incomes | currency:
+                                    'XOF'}}</span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <h6>Total dépenses</h6>
                                 <span class="text-danger"
-                                    style="font-weight: bold;">{{ budget?.total_expenses | currency: 'XOF'}}</span>
+                                    style="font-weight: bold;">{{
+                                    budget?.total_expenses | currency:
+                                    'XOF'}}</span>
                             </div>
                         </div>
                     </div>
@@ -103,7 +149,7 @@
                         class="btn btn-outline-dark text-truncate"><i
                             class="uil uil-user me-1"></i>
                         Répartir</button>
-                    <button type="button"
+                    <button type="button" (click)="createOrManageBudget(budget)"
                         title="{{budget?.status ? 'Détails du budget' : 'Créer le budget'}}"
                         class="btn btn-outline-dark text-truncate"><i
                             class="uil uil-envelope-alt me-1"></i>
