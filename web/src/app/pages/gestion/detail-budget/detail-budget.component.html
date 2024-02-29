@@ -6,16 +6,42 @@
 <div class="col-xl-12">
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title">{{ budget?.month?.label }} {{ budget?.year_budget }}</h4>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div>
+                        <h5 class="card-title">{{ budget?.month?.label }} {{
+                            budget?.year_budget }}</h5>
+                    </div>
+                </div>
+    
+                <div class="col-md-6">
+                    <div
+                        class="d-flex flex-wrap align-items-center justify-content-end gap-2 mb-3">
+    
+                        <div>
+                            <button type="button"
+                                class="btn btn-primary waves-effect waves-light"><i
+                                    class="bx bx-plus me-1"></i> Ajouter
+                                dépense</button>
+                        </div>
+    
+                    </div>
+    
+                </div>
+            </div>
+            
         </div><!-- end card header -->
 
         <div class="card-body">
             <!-- Nav tabs -->
-            <ul ngbNav #customNav="ngbNav" [activeId]="1" class="nav-tabs nav-tabs-custom nav-justified">
+            <ul ngbNav #customNav="ngbNav" [activeId]="1"
+                class="nav-tabs nav-tabs-custom nav-justified">
                 <li [ngbNavItem]="1">
                     <a ngbNavLink>
-                        <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
-                        <span class="d-none d-sm-block">Informations générales</span>
+                        <span class="d-block d-sm-none"><i
+                                class="fas fa-home"></i></span>
+                        <span class="d-none d-sm-block">Informations
+                            générales</span>
                     </a>
                     <ng-template ngbNavContent>
                         <ng-template [ngTemplateOutlet]="InfoGen"></ng-template>
@@ -23,29 +49,37 @@
                 </li>
                 <li [ngbNavItem]="2">
                     <a ngbNavLink>
-                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                        <span class="d-none d-sm-block">Sources de revenus</span>
+                        <span class="d-block d-sm-none"><i
+                                class="far fa-user"></i></span>
+                        <span class="d-none d-sm-block">Sources de
+                            revenus</span>
                     </a>
                     <ng-template ngbNavContent>
-                        <ng-template [ngTemplateOutlet]="TabContent1"></ng-template>
+                        <ng-template
+                            [ngTemplateOutlet]="IncomesTab"></ng-template>
                     </ng-template>
                 </li>
                 <li [ngbNavItem]="3">
                     <a ngbNavLink>
-                        <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
-                        <span class="d-none d-sm-block">Dépenses</span>
+                        <span class="d-block d-sm-none"><i
+                                class="far fa-envelope"></i></span>
+                        <span class="d-none d-sm-block">Dépenses par
+                            catégorie</span>
                     </a>
                     <ng-template ngbNavContent>
-                        <ng-template [ngTemplateOutlet]="InfoGen"></ng-template>
+                        <ng-template
+                            [ngTemplateOutlet]="ExpensesTab"></ng-template>
                     </ng-template>
                 </li>
                 <li [ngbNavItem]="4">
                     <a ngbNavLink>
-                        <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                        <span class="d-block d-sm-none"><i
+                                class="fas fa-cog"></i></span>
                         <span class="d-none d-sm-block">Vue graphique</span>
                     </a>
                     <ng-template ngbNavContent>
-                        <ng-template [ngTemplateOutlet]="TabContent1"></ng-template>
+                        <ng-template
+                            [ngTemplateOutlet]="GraphicTab"></ng-template>
                     </ng-template>
                 </li>
             </ul>
@@ -54,14 +88,15 @@
     </div><!-- end card -->
 </div>
 
-
 <ng-template #InfoGen>
     <div class="row p-3">
         <div class="col-sm-6 col-lg-4">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Montant global</h5>
-                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.global_amount | currency: 'XOF' }}</p>
+                    <p class="card-text font-size-18 text-end"
+                        style="font-weight: 500;">{{ budget?.global_amount |
+                        currency: 'XOF' }}</p>
                 </div>
             </div>
         </div>
@@ -69,7 +104,9 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Montant budgétisé</h5>
-                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.total_incomes | currency: 'XOF' }}</p>
+                    <p class="card-text font-size-18 text-end"
+                        style="font-weight: 500;">{{ budget?.total_incomes |
+                        currency: 'XOF' }}</p>
                 </div>
             </div>
         </div>
@@ -77,8 +114,10 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Montant non budgétisé</h5>
-                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.remaining_amount | currency: 'XOF'
-                    }}</p>
+                    <p class="card-text font-size-18 text-end"
+                        style="font-weight: 500;">{{ budget?.remaining_amount |
+                        currency: 'XOF'
+                        }}</p>
                 </div>
             </div>
         </div>
@@ -86,7 +125,9 @@
             <div class="card border-danger">
                 <div class="card-body">
                     <h5 class="card-title">Total des dépenses</h5>
-                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.total_expenses | currency: 'XOF' }}</p>
+                    <p class="card-text font-size-18 text-end"
+                        style="font-weight: 500;">{{ budget?.total_expenses |
+                        currency: 'XOF' }}</p>
                 </div>
             </div>
         </div>
@@ -94,7 +135,9 @@
             <div class="card border-success">
                 <div class="card-body">
                     <h5 class="card-title">Solde</h5>
-                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.balance | currency: 'XOF' }}</p>
+                    <p class="card-text font-size-18 text-end"
+                        style="font-weight: 500;">{{ budget?.balance | currency:
+                        'XOF' }}</p>
                 </div>
             </div>
         </div>
@@ -102,35 +145,157 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Date de création</h5>
-                    <p class="card-text font-size-18 text-end" style="font-weight: 500;">{{ budget?.created_at | date: 'dd MMMM yyyy' }}</p>
+                    <p class="card-text font-size-18 text-end"
+                        style="font-weight: 500;">{{ budget?.created_at | date:
+                        'dd MMMM yyyy' }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-
     <div class="mt-3">
         <h5 class="mb-3">Catégories de dépenses associées à ce budget :</h5>
         <div class="px-2">
-            <span class="font-size-20 pe-1"><span class="badge bg-light-subtle text-black">Design</span></span>
-            <span class="font-size-20 pe-1"><span class="badge bg-light-subtle text-black">Development</span></span>
-            <span class="font-size-20 pe-1"><span class="badge bg-light-subtle text-black">Wordpress</span></span>
-            <span class="font-size-20 pe-1"><span class="badge bg-light-subtle text-black">HTML</span></span>
-            <span class="font-size-20 pe-1"><span class="badge bg-light-subtle text-black">Project</span></span>
+            <ng-container *ngIf="categories.length == 0">
+                <p>Aucune pour le moment !</p>
+            </ng-container>
+            <ng-container *ngFor="let categ of categories">
+                <span class="font-size-20 pe-1"><span
+                        class="badge bg-light-subtle text-black"><i
+                            class="mdi mdi-tag-outline"></i>{{ categ
+                        }}</span></span>
+            </ng-container>
         </div>
     </div>
 
 </ng-template>
 
 <!-- Tab Content -->
-<ng-template #TabContent1>
-    <p class="p-3 mb-0">
-        Food truck fixie locavore, accusamus mcsweeney's marfa nulla
-        single-origin coffee squid. Exercitation +1 labore velit, blog
-        sartorial PBR leggings next level wes anderson artisan four loko
-        farm-to-table craft beer twee. Qui photo booth letterpress,
-        commodo enim craft beer mlkshk aliquip jean shorts ullamco ad
-        vinyl cillum PBR. Homo nostrud organic, assumenda labore
-        aesthetic magna delectus.
-    </p>
+<ng-template #IncomesTab>
+    <div class="p-3">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <h3 class="card-title text-black">Revenu net disponible : {{
+                        budget?.global_amount | currency: 'XOF' }}</h3>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div
+                    class="d-flex flex-wrap align-items-center justify-content-end gap-2 mb-3">
+
+                    <div>
+                        <button type="button" (click)="displayModal(true)"
+                            class="btn btn-primary waves-effect waves-light"><i
+                                class="bx bx-plus me-1"></i> Ajouter
+                            revenu</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table mb-0">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Libellé</th>
+                        <th>Montant</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let income of incomes; let i = index">
+                        <th scope="row">{{ i + 1 }}</th>
+                        <td> {{ income?.income?.label }}</td>
+                        <td> {{ income?.ib_amount | currency: 'XOF'}}</td>
+                        <td> <button type="button"
+                                class="btn btn-danger waves-effect waves-light">Supprimer</button></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #ExpensesTab>
+    <!-- Table -->
+    <div class="table-responsive p-3">
+        <table
+            class="table table-striped align-middle datatable dt-responsive table-check nowrap datatables"
+            style="border-collapse: collapse; border-spacing: 0 8px; width: 100%;">
+
+            <thead>
+                <tr>
+                    <th style="width: 5%">#</th>
+                    <th>Charges</th>
+                    <th>Type de charge</th>
+                    <th>Prévision</th>
+                    <th>Montant dépensé</th>
+                    <th>Solde</th>
+                    <th>Télécharger PDF</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="repartitions?.length === 0">
+                    <tr>
+                        <td colspan="8">Aucune catégorie de dépenses
+                            trouvée.</td>
+                    </tr>
+                </ng-container>
+                <tr
+                    *ngFor="let repartition of repartitions | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+                    <td>
+                        {{i + 1}}
+                    </td>
+                    <td>
+                        {{repartition.rep_designation}}
+                    </td>
+                    <td>
+                        {{ repartition?.type_charge }}
+                    </td>
+
+                    <td>
+                        {{ repartition?.rep_amount | currency: 'XOF' }}
+                    </td>
+                    <td style="color: red;">
+                        {{ repartition?.sum_amount_used | currency: 'XOF' }}
+                    </td>
+                    <td style="width: 12rem; font-family: 'Poppins';"
+                        [ngClass]="{'solde_positif': (repartition?.rep_amount - repartition?.sum_amount_used) > 0,
+                        'solde_negatif': (repartition?.rep_amount - repartition?.sum_amount_used) < 0,
+                        'solde_nul': (repartition?.rep_amount - repartition?.sum_amount_used) == 0 }">
+                        {{ (repartition?.rep_amount -
+                        repartition?.sum_amount_used) | currency: 'XOF' }}
+                    </td>
+                    <td>
+                        <button type="button"
+                            class="btn btn-soft-light btn-sm w-xs waves-effect btn-label waves-light"><i
+                                class="bx bx-download label-icon"></i>
+                            Pdf</button>
+
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <div class="pagination-style">
+            <pagination-controls previousLabel="Précédent"
+                nextLabel="Suivant"
+                (pageChange)="p = $event"></pagination-controls>
+        </div>
+
+    </div>
+    <!-- End table -->
+
+</ng-template>
+
+<ng-template #GraphicTab>
+
 </ng-template>

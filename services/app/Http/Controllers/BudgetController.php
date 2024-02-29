@@ -84,7 +84,6 @@ class BudgetController extends Controller
 
             $true_current_month = Month::where('month_number', date('n'))->first('id');
 
-            Log::info($_data);
             return response()->json([
                 'data' => $_data,
                 'index_page' => $index_page,

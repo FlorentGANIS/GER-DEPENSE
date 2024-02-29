@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { GestionRoutingModule } from './gestion-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WidgetModule } from 'src/app/shared/widget/widget.module';
@@ -56,6 +56,7 @@ RecapComponent, StatisticsComponent, StatisticByExpenseComponent, VariableCharge
     NgbAlertModule,
     NgxPaginationModule,
     NgxUiLoaderModule
-  ]
+  ],
+  providers: [CurrencyPipe]
 })
 export class GestionModule { }

@@ -21,7 +21,7 @@ export class DetailBudgetComponent implements OnInit {
 
  id!: any; budget: any; is_loading: boolean = false; incomes: any[] = []; expense_form!: FormGroup; expenses: any[] = []; income_form!: FormGroup;
 
-  repartitions: any; reps: any; is_processing: boolean = false; 
+  repartitions: any; reps: any; is_processing: boolean = false; p: number = 1;
 
   message: string = ''; today!: Date; management_units: any; with_detail: boolean = false; total_amount_used_for_budget: number = 0; invoice: any; income_dialog: boolean = false;
 
@@ -44,7 +44,26 @@ export class DetailBudgetComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
     this.budgetDetail();
     this.today = new Date();
+    this.listIncomes();
+  }
 
+  displayModal(status: boolean) {
+    if (status) {
+      this.income_dialog = true;
+    } else {
+      this.income_dialog = false;
+      this.income_form.reset();
+    }
+  }
+
+  getRepId(event: any) {
+    this.repartitions.forEach((elt: any) => {
+      if (elt.id == event.value) {
+        this.expense_form.patchValue({
+          budget_id: this.budget?.id
+        });
+      }
+    });
   }
 
   budgetDetail() {
@@ -79,5 +98,14 @@ export class DetailBudgetComponent implements OnInit {
         }
 
       });
+  }
+
+  
+  listIncomes() {
+    this.income_service.list().subscribe({
+      next: (v: any) => {
+        this.budget_incomes = v.data;
+      }
+    });
   }
 }

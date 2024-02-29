@@ -176,7 +176,7 @@ class CategoryController extends Controller
                 }
 
                 $_data = Category::where('designation', $designation)->where('create_id', getUserId())->get();
-                if (count($_data) >= 1) {
+                if (count($_data) >= 2) {
                     return response()->json([
                         'data' => $_data,
                         'message' => 'Une autre catégorie existe avec cette désignation.',
