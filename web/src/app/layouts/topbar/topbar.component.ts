@@ -10,6 +10,8 @@ import { AuthenticationService } from '../../core/services/auth.service';
 import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
 
 import { LAYOUT_MODE } from "../layouts.model";
+import { TokenService } from 'src/app/shared/authentication/token.service';
+import { AuthStateService } from 'src/app/shared/authentication/auth-state.service';
 
 @Component({
   selector: 'app-topbar',
@@ -22,7 +24,7 @@ import { LAYOUT_MODE } from "../layouts.model";
  */
 export class TopbarComponent implements OnInit {
 
-  mode: string | undefined;
+  mode: string | undefined; username: string = '';
   element: any;
   flagvalue: any;
   cookieValue: any;
@@ -31,6 +33,8 @@ export class TopbarComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private tokenService: TokenService,
+    private authState: AuthStateService,
     private authService: AuthenticationService,
     private authFackservice: AuthfakeauthenticationService,
     public languageService: LanguageService,
@@ -56,6 +60,7 @@ export class TopbarComponent implements OnInit {
   layoutMode!: string;
 
   ngOnInit(): void {
+    this.username = this.tokenService.getUserFirstName + ' ' + this.tokenService.getUserLastName;
     this.layoutMode = LAYOUT_MODE;
 
     this.element = document.documentElement;
@@ -113,7 +118,9 @@ export class TopbarComponent implements OnInit {
     } else {
       this.authFackservice.logout();
     }
-    this.router.navigate(['/account/login']);
+    this.authState.changeAuthStatus(false);
+    this.tokenService.removeToken();
+    this.router.navigate(['/login']);
   }
 
 }

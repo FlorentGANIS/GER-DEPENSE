@@ -11,7 +11,8 @@
                     class="spinner-border text-primary m-1" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
-                <h4 class="card-title">Création du {{ curr_name }} {{ year }}</h4>
+                <h4 class="card-title">Création du {{ curr_name }} {{ year
+                    }}</h4>
 
             </div>
             <div class="card-body p-4">
@@ -93,7 +94,8 @@
     </div>
 </div>
 
-<div class="row" *ngIf="!display_form">
+<div class="row" *ngIf="!display_form" ngxUiLoaderBlurred
+    [loaderId]="'loader-spin'">
     <ng-container *ngFor="let budget of budgets">
         <div class="col-xl-3 col-sm-6">
             <div class="card text-center">
@@ -160,22 +162,26 @@
             <!-- end card -->
         </div>
     </ng-container>
-
+    <ngx-ui-loader overlayColor="rgba(225,220,220,0.8)" [bgsOpacity]="3"
+    [loaderId]="'loader-spin'"></ngx-ui-loader>
     <!-- end row -->
 
-    <div class="row justify-content-md-between align-items-md-center mt-2">
-        <!-- <div class="col-sm-12 col-md-5">
+</div>
+
+
+<div class="row justify-content-md-between align-items-md-center mt-2">
+    <!-- <div class="col-sm-12 col-md-5">
         <div class="budgetTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
             Showing {{startIndex}} - {{endIndex}} of {{totalRecords}}
         </div>
     </div> -->
-        <!-- Pagination -->
-        <!-- <div class="col-5">
+    <!-- Pagination -->
+    <!-- <div class="col-5">
         <div class="btn-group float-end">
             <ngb-pagination class="pagination-rounded" [collectionSize]="totalRecords"
                 (pageChange)="onPageChange($event)" [(page)]="page" [pageSize]="pageSize">
             </ngb-pagination>
         </div>
     </div> -->
-        <!-- End Pagination -->
-    </div>
+    <!-- End Pagination -->
+</div>

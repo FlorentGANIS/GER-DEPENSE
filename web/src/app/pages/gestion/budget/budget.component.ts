@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { BudgetService } from 'src/app/shared/services/budget.service';
 import { IncomeService } from 'src/app/shared/services/income.service';
 
@@ -22,7 +23,7 @@ export class BudgetComponent implements OnInit{
   display_form: boolean = false;
 
   constructor(private fb: FormBuilder, private budget_service: BudgetService, private income_service: IncomeService,
-    private toastr: ToastrService, private router: Router) { }
+    private toastr: ToastrService, private router: Router,private ngxLoader: NgxUiLoaderService) { }
 
   ngOnInit(): void {
    
@@ -71,20 +72,19 @@ export class BudgetComponent implements OnInit{
 
 
   listBudgets() {
-    this.is_processing = true;
+    this.ngxLoader.startLoader('loader-spin');
     this.budget_service.list({}).subscribe(
       {
         next: (v: any) => {
           this.budgets = v.data;
-          console.log(this.budgets)
           this.index_page = v.index_page;
           this.true_current_month = v.true_current_month.id;
-          this.is_processing = false;
+         this.ngxLoader.stopLoader('loader-spin');
         },
 
         error: (e) => {
           console.error(e);
-          this.is_processing = false;
+         this.ngxLoader.stopLoader('loader-spin');
         },
 
         complete: () => {

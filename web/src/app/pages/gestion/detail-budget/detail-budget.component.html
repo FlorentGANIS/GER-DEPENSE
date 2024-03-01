@@ -13,23 +13,24 @@
                             budget?.year_budget }}</h5>
                     </div>
                 </div>
-    
+
                 <div class="col-md-6">
                     <div
                         class="d-flex flex-wrap align-items-center justify-content-end gap-2 mb-3">
-    
+
                         <div>
                             <button type="button"
+                                (click)="openExpenseModal(contentExpense)"
                                 class="btn btn-primary waves-effect waves-light"><i
                                     class="bx bx-plus me-1"></i> Ajouter
                                 dépense</button>
                         </div>
-    
+
                     </div>
-    
+
                 </div>
             </div>
-            
+
         </div><!-- end card header -->
 
         <div class="card-body">
@@ -156,7 +157,7 @@
     <div class="mt-3">
         <h5 class="mb-3">Catégories de dépenses associées à ce budget :</h5>
         <div class="px-2">
-            <ng-container *ngIf="categories.length == 0">
+            <ng-container *ngIf="categories?.length == 0">
                 <p>Aucune pour le moment !</p>
             </ng-container>
             <ng-container *ngFor="let categ of categories">
@@ -238,7 +239,7 @@
                     <th>Prévision</th>
                     <th>Montant dépensé</th>
                     <th>Solde</th>
-                    <th>Télécharger PDF</th>
+                    <th>Télécharger</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -250,7 +251,7 @@
                     </tr>
                 </ng-container>
                 <tr
-                    *ngFor="let repartition of repartitions | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+                    *ngFor="let repartition of repartitions | paginate: {id: 'tableCategories', itemsPerPage: 10, currentPage: p }; let i = index">
                     <td>
                         {{i + 1}}
                     </td>
@@ -281,12 +282,19 @@
                             Pdf</button>
 
                     </td>
+
+                    <td>
+                        <button type="button"
+                            (click)="detailExpensesByCategory(exlargeModal, repartition)"
+                            class="btn btn-info waves-effect waves-light">Détails</button>
+                    </td>
+
                 </tr>
 
             </tbody>
         </table>
         <div class="pagination-style">
-            <pagination-controls previousLabel="Précédent"
+            <pagination-controls previousLabel="Précédent" id="tableCategories"
                 nextLabel="Suivant"
                 (pageChange)="p = $event"></pagination-controls>
         </div>
@@ -298,4 +306,255 @@
 
 <ng-template #GraphicTab>
 
+</ng-template>
+
+<!-- Détail expenses par category -->
+<ng-template #exlargeModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">Dépenses de la catégorie : {{ repartition_expense.rep_designation }}</h5>
+        <button type="button" class="btn-close" aria-label="Close"
+            (click)="modal.dismiss('Close click')">
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="table-responsive">
+            <table
+                class="table table-striped align-middle datatable dt-responsive table-check nowrap datatables"
+                style="border-collapse: collapse; border-spacing: 0 8px; width: 100%;">
+
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th>Date</th>
+                        <th>Quantité</th>
+                        <th>Prix Unitaire</th>
+                        <th>Montant</th>
+                        <th>Document</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="repartition_expense.expenses.length === 0">
+                        <tr>
+                            <td colspan="7">Aucune ligne
+                                trouvée.</td>
+                        </tr>
+                    </ng-container>
+                    <tr
+                        *ngFor="let expense of repartition_expense.expenses | paginate: {id:'tableExpenses', itemsPerPage: 10, currentPage: p }; let i = index">
+                        <td>
+                            {{i + 1}}
+                        </td>
+                        <td>
+                            {{expense?.expense_date | date:
+                                'dd-MM-yyyy'}}
+                        </td>
+                       <td>
+                        {{(expense?.quantity == null) ? "" :
+                                        expense?.quantity}}
+                                        {{(expense?.management_unit_id == null) ? "" : expense?.management_unit_id}}
+                       </td>
+                       <td>
+                        {{(expense?.unit_price == null) ? "-" :
+                                        expense?.unit_price}}
+                       </td>
+
+                       <td>
+                        {{expense?.exp_amount | currency:
+                            'XOF'}}
+                       </td>
+
+                       <td>
+
+                       </td>
+
+                       <td>
+
+                       </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+            <div class="pagination-style">
+                <pagination-controls previousLabel="Précédent" id="tableExpenses"
+                    nextLabel="Suivant"
+                    (pageChange)="p2 = $event"></pagination-controls>
+
+            </div>
+
+        </div>
+            
+
+    </div>
+</ng-template>
+
+<!-- Add expense form -->
+<ng-template #contentExpense let-modal>
+    <div class="modal-header">
+        <div *ngIf="is_processing"
+            class="spinner-border text-primary m-1" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <h5 class="modal-title mt-0">Ajout d'une dépense ({{
+            budget?.month?.label }} {{ budget?.year_budget }})</h5>
+        <button type="button" class="btn-close" aria-label="Close"
+            (click)="modal.dismiss('Close click')">
+        </button>
+    </div>
+    <div class="modal-body">
+        <form novalidate (ngSubmit)="addExpense()" [formGroup]="expense_form">
+            <div class="row">
+
+                <div class="row">
+                    <input type="hidden" formControlName="budget_id">
+                    <div class="mb-3">
+                        <label class="control-label">Charge
+                            <span
+                                class="required_color">*</span></label>
+                        <select
+                            class="form-control form-select"
+                            formControlName="repartition_id" (change)="getRepId()"
+                            [ngClass]="{'is-invalid': expense_form.get('repartition_id')?.touched && !expense_form.get('repartition_id')?.valid}">
+
+                            <option *ngFor="let item of repartitions"
+                                value="{{item.id}}">{{item.rep_designation}}</option>
+                        </select>
+
+                        @if(expense_form.get('repartition_id')?.touched &&
+                        !expense_form.get('repartition_id')?.valid){
+                        <div class="invalid-feedback">
+                            @if(expense_form.get('repartition_id')?.touched
+                            &&
+                            expense_form.get('repartition_id')?.hasError('required')){
+                            <span>La charge est
+                                requise.</span>}
+                        </div>}
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label" for="expense_date">Date de
+                                dépense <span
+                                    class="required_color">*</span></label>
+                            <input id="expense_date" type="date"
+                                formControlName="expense_date"
+                                class="form-control"
+                                max="{{today | date:'yyyy-MM-dd'}}"
+                                [ngClass]="{'ng-dirty ng-invalid' : expense_form.get('expense_date')?.touched && !expense_form.get('expense_date')?.valid}" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label" for>Avec détail ? </label>
+                            <div class="form-check form-switch form-switch-md">
+                                <input type="checkbox" class="form-check-input"
+                                    (change)="getValueOfSwith($event)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="with_detail">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label" for="quantity">Quantité
+                                <span
+                                    class="required_color">*</span></label>
+                            <input type="number" formControlName="quantity"
+                                class="form-control" min="1" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label" for="unit_price">Prix
+                                Unitaire </label>
+                            <input type="number" formControlName="unit_price"
+                                class="form-control" min="5" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="control-label">Montant
+                                <span *ngIf="!with_detail"
+                                    class="required_color">*</span></label>
+                            <input class="form-control"
+                                placeholder="Entrer le montant"
+                                type="number"
+                                formControlName="exp_amount"
+                                [ngClass]="{'is-invalid': !with_detail &&  expense_form.get('exp_amount')?.touched && !expense_form.get('exp_amount')?.valid}" />
+
+                            @if(expense_form.get('exp_amount')?.touched &&
+                            !expense_form.get('exp_amount')?.valid){
+                            <div class="invalid-feedback">
+                                @if(expense_form.get('exp_amount')?.touched
+                                &&
+                                expense_form.get('exp_amount')?.hasError('required')){
+                                <span>Le montant de la charge est
+                                    requis.</span>}
+
+                            </div>}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label"
+                                for="management_unit_id">Unité de gestion
+                            </label>
+                            <select
+                                class="form-control form-select"
+                                formControlName="management_unit_id">
+
+                                <option *ngFor="let mng of management_units"
+                                    value="{{mng.id}}">{{mng.label}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="mb-3">
+                        <label class="control-label">Commentaire</label>
+                        <textarea class="form-control" rows="2"
+                            style="resize: none;"
+                            placeholder="Entrer le commentaire"
+                            type="text"
+                            formControlName="comment"></textarea>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="mb-3">
+                        <label class="control-label">Joindre un
+                            fichier</label><br>
+                        <input type="file" (change)="uploadInvoice($event)"
+                            accept="application/pdf,image/*" />
+                    </div>
+
+                </div>
+
+                <div class="text-end mt-3">
+                    <button type="button"
+                        style="margin-right: 10px !important;"
+                        (click)="closeForm()"
+                        class="btn btn-danger waves-effect waves-light">Annuler</button>
+                    <button
+                        class="btn btn-success waves-effect waves-light"
+                        type="submit"
+                        [disabled]="!expense_form.valid || is_processing">Ajouter</button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
 </ng-template>

@@ -243,16 +243,15 @@
             <div class="dropdown d-inline-block" ngbDropdown>
                 <button type="button" class="btn header-item topbar-light bg-light-subtle border-start border-end" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
                     <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
-                    <span class="d-none d-xl-inline-block ms-1 fw-medium">Shawn L.</span>
+                    <span class="d-none d-xl-inline-block ms-1 fw-medium">{{ username }}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
                     <!-- item-->
                     <a class="dropdown-item" routerLink="/apps/profile"><i class="mdi mdi-face-man font-size-16 align-middle me-1"></i> Profile</a>
-                    <a class="dropdown-item" routerLink="/account/lock-screen"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Lock screen</a>
+                    <!-- <a class="dropdown-item" routerLink="/account/lock-screen"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Lock screen</a> -->
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="javascript: void(0);" (click)="logout()"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle" key="t-logout">{{ 'MENUITEMS.AUTHENTICATION.LIST.LOGOUT' |
-                            translate}}</span></a>
+                    <a class="dropdown-item" href="javascript: void(0);" (click)="logout()"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle" key="t-logout">Se Déconnecter</span></a>
                 </div>
             </div>
 
