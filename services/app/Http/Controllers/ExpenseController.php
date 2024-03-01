@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Budget;
+use App\Models\Envelope;
 use App\Models\Expense;
+use App\Models\ExpenseBudget;
+use App\Models\HistoryEnvelope;
 use App\Models\ManagementUnit;
 use App\Models\Repartition;
 use Carbon\Carbon;
@@ -46,14 +49,14 @@ class ExpenseController extends Controller
             //     $param[] = ['year_budget', '=', $request->year_budget];
             // }     
 
-            if($request->category_id){
+            if ($request->category_id) {
                 $data = Expense::with(['management_unit', 'repartition.budget.month', 'repartition.category'])
-            ->where('create_id', getUserId())->whereIn('repartition_id', $id_reps)->where($param)
-            ->orderBy('id', 'desc')->get();
-            }else{
+                    ->where('create_id', getUserId())->whereIn('repartition_id', $id_reps)->where($param)
+                    ->orderBy('id', 'desc')->get();
+            } else {
                 $data = Expense::with(['management_unit', 'repartition.budget.month', 'repartition.category'])
-            ->where('create_id', getUserId())->where($param)
-            ->orderBy('id', 'desc')->get();
+                    ->where('create_id', getUserId())->where($param)
+                    ->orderBy('id', 'desc')->get();
             }
 
             $total_expenses = 0;
@@ -151,6 +154,61 @@ class ExpenseController extends Controller
                 }
                 $exp_amount = $this->verifyValueNumber($request->exp_amount);
 
+                // $expenses = Expense::where('repartition_id', $request->repartition_id)->where('create_id', getUserId())->get();
+                // $repartition = Repartition::where('id', $request->repartition_id)->where('create_id', getUserId())->first();
+
+                $exp_budget = ExpenseBudget::where('repartition_id', $request->repartition_id)->where('create_id', getUserId())->first();
+                $balance = $exp_budget->prevision - $exp_budget->amount_used + $exp_budget->envelope_help;
+                if ($balance > $exp_amount) {
+                    $exp_budget->amount_used += $exp_amount;
+                }
+                $temp_amount_to_find = 0;
+
+                // Si le solde est supérieur au montant à dépenser
+                if ($balance <= $exp_amount || $balance == 0) {
+                    Log::info('est bien dedans');
+                    if ($balance >= 0) {
+                        $temp_amount_to_find = $exp_amount - $balance;
+                    }
+                    $envelope = Envelope::where('category_id', $exp_budget->category_id)->where('create_id', getUserId())->first();
+                    // S'il existe d'enveloppe
+                    if ($envelope) {
+                        if ($envelope->envelope_amount >= $temp_amount_to_find) {
+                            Log::info('est bien dedans 11111');
+                            $envelope->envelope_amount -= $temp_amount_to_find;
+                            $exp_budget->envelope_help += $temp_amount_to_find;
+                            Log::info('aaaaaaaaa : '.$temp_amount_to_find);
+                            Log::info('zerty : '.$exp_budget->envelope_help);
+                            Log::info('qerty : '.$balance);
+                            $exp_budget->amount_used += $exp_amount;
+                        }
+
+                        if ($envelope->envelope_amount > 0 && $envelope->envelope_amount < $temp_amount_to_find) {
+                            Log::info('est bien dedans 22222');
+                            $temp2 = $exp_amount - $envelope->envelope_amount;
+                            $exp_budget->envelope_help += $temp2;
+                            $exp_budget->amount_used += $exp_amount;
+                        }
+
+                        if($envelope->envelope_amount < 0)
+
+                        $envelope->update();
+
+                        HistoryEnvelope::create([
+                            'type' => 'Sortie',
+                            'create_id' => getUserId(),
+                            'category_id' => $exp_budget->category_id,
+                            'env_amount' => $exp_amount,
+                            'from_budget' => '',
+                            'to_budget' => $request->budget_id,
+                        ]);
+                    }
+                    
+                }
+
+                
+
+                $exp_budget->update();
                 $expense = Expense::create(array_merge([
                     'repartition_id' => $request->repartition_id,
                     'quantity' => $this->verifyValueNumber($request->quantity),

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('total_expenses');
             $table->integer('balance');
             $table->boolean('is_shared')->default(false);
-            $table->char('create_id')->nullable();
+            $table->char('create_id');
             $table->char('update_id')->nullable();
             $table->timestamps();
             

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('invoice_path')->nullable();
             $table->char('repartition_id');
             $table->char('management_unit_id')->nullable();
-            $table->char('create_id')->nullable();
+            $table->char('create_id');
             $table->char('update_id')->nullable();
             $table->timestamps();
 

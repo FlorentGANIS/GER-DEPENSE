@@ -87,6 +87,7 @@ Route::group(['prefix' => 'budget'], function(){
     Route::post('add-income', [BudgetController::class, 'addIncomeToBudget']);
     Route::post('delete-income-budget', [BudgetController::class, 'deleteIncomeFromBudget']);
     Route::post('dashboard-recap', [BudgetController::class, 'dashboardRecap']);
+    Route::post('close', [BudgetController::class, 'closeBudget']);
     
 });
 

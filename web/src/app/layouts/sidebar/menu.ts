@@ -24,6 +24,18 @@ export const MENU: MenuItem[] = [
         icon: 'list',
         link: '/gestion/depenses',
     },
+    {
+        id: 78,
+        label: 'Mon enveloppe',
+        icon: 'list',
+        link: '/gestion/enveloppe',
+    },
+    {
+        id: 79,
+        label: 'Historique enveloppe',
+        icon: 'list',
+        link: '/gestion/historique-enveloppe',
+    },
 
     {
         id: 71,

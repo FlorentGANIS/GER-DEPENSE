@@ -72,19 +72,19 @@ export class BudgetComponent implements OnInit{
 
 
   listBudgets() {
-    this.ngxLoader.startLoader('loader-spin');
+    //this.ngxLoader.startLoader('loader-spin');
     this.budget_service.list({}).subscribe(
       {
         next: (v: any) => {
           this.budgets = v.data;
           this.index_page = v.index_page;
           this.true_current_month = v.true_current_month.id;
-         this.ngxLoader.stopLoader('loader-spin');
+         //this.ngxLoader.stopLoader('loader-spin');
         },
 
         error: (e) => {
           console.error(e);
-         this.ngxLoader.stopLoader('loader-spin');
+         //this.ngxLoader.stopLoader('loader-spin');
         },
 
         complete: () => {

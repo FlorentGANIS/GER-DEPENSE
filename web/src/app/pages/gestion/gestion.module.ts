@@ -24,13 +24,16 @@ import { StatisticByExpenseComponent } from './statistic-by-expense/statistic-by
 import { VariableChargeComponent } from './variable-charge/variable-charge.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SavingComponent } from './saving/saving.component';
+import { EnvelopeComponent } from './envelope/envelope.component';
+import { HistoryEnvelopeComponent } from './history-envelope/history-envelope.component';
 
 
 
 @NgModule({
   declarations: [DashboardComponent, BudgetComponent, DetailBudgetComponent,
   DistributionComponent, ExpenseComponent, FixedChargeComponent, IncomeComponent, SavingComponent,
-RecapComponent, StatisticsComponent, StatisticByExpenseComponent, VariableChargeComponent],
+RecapComponent, StatisticsComponent, StatisticByExpenseComponent, VariableChargeComponent,
+EnvelopeComponent, HistoryEnvelopeComponent],
   imports: [
     CommonModule,
     WidgetModule,

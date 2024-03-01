@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->char('id', 20)->primary();
-            $table->string('designation', 50);
-            $table->integer('fixed_amount')->nullable();
-            $table->boolean('status')->default(true);
-            $table->enum('type', ['FIXE', 'VARIABLE', 'EPARGNE']);
+        Schema::create('history_envelopes', function (Blueprint $table) {
+            $table->id();
+            $table->char('category_id');
+            $table->string('type', 10);
+            $table->integer('env_amount');
+            $table->string('from_budget', 50)->nullable();
+            $table->string('to_budget', 50)->nullable();
             $table->char('create_id');
             $table->char('update_id')->nullable();
             $table->timestamps();
-            
+
             $table->foreign('create_id')->references('id')->on('users');
             $table->foreign('update_id')->references('id')->on('users');
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fixed_charges');
+        Schema::dropIfExists('history_envelopes');
     }
 };

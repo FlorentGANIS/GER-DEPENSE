@@ -80,4 +80,8 @@ export class BudgetService {
   deleteIncomeBudget(body:any) {
     return this.http.post(environment.backend_url + '/budget/delete-income-budget', body);
   }
+
+  closeBudget(body:any) {
+    return this.http.post(environment.backend_url + '/budget/close', body);
+  }
 }

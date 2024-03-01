@@ -19,7 +19,7 @@
                         class="d-flex flex-wrap align-items-center justify-content-end gap-2 mb-3">
 
                         <div>
-                            <button type="button"
+                            <button type="button" *ngIf="!budget?.is_closed"
                                 (click)="openExpenseModal(contentExpense)"
                                 class="btn btn-primary waves-effect waves-light"><i
                                     class="bx bx-plus me-1"></i> Ajouter
@@ -171,6 +171,15 @@
 
 </ng-template>
 
+<div class="mt-5 mb-2">
+    <div class="text-end ">
+        <button type="button"
+            style="margin-right: 10px !important;"
+            (click)="confirmCloseBudget()"
+            class="btn btn-danger waves-effect waves-light">Clôturer le budget</button>
+    </div>
+</div>
+
 <!-- Tab Content -->
 <ng-template #IncomesTab>
     <div class="p-3">
@@ -214,7 +223,7 @@
                         <th scope="row">{{ i + 1 }}</th>
                         <td> {{ income?.income?.label }}</td>
                         <td> {{ income?.ib_amount | currency: 'XOF'}}</td>
-                        <td> <button type="button"
+                        <td> <button type="button" (click)="confirmDeleteIncomeBudget(income.income?.label, income.id)"
                                 class="btn btn-danger waves-effect waves-light">Supprimer</button></td>
                     </tr>
 
@@ -226,7 +235,7 @@
 
 <ng-template #ExpensesTab>
     <!-- Table -->
-    <div class="table-responsive p-3">
+    <div class="table-responsive p-2">
         <table
             class="table table-striped align-middle datatable dt-responsive table-check nowrap datatables"
             style="border-collapse: collapse; border-spacing: 0 8px; width: 100%;">
@@ -239,42 +248,49 @@
                     <th>Prévision</th>
                     <th>Montant dépensé</th>
                     <th>Solde</th>
+                    <th>Aide Enveloppe</th>
                     <th>Télécharger</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <ng-container *ngIf="repartitions?.length === 0">
+                <ng-container *ngIf="exp_budget?.length === 0">
                     <tr>
                         <td colspan="8">Aucune catégorie de dépenses
                             trouvée.</td>
                     </tr>
                 </ng-container>
                 <tr
-                    *ngFor="let repartition of repartitions | paginate: {id: 'tableCategories', itemsPerPage: 10, currentPage: p }; let i = index">
+                    *ngFor="let detail of exp_budget | paginate: {id: 'tableCategories', itemsPerPage: 10, currentPage: p }; let i = index">
                     <td>
                         {{i + 1}}
                     </td>
                     <td>
-                        {{repartition.rep_designation}}
+                        {{detail.category?.designation}}
                     </td>
                     <td>
-                        {{ repartition?.type_charge }}
+                        {{ detail.category?.type }}
                     </td>
 
                     <td>
-                        {{ repartition?.rep_amount | currency: 'XOF' }}
+                        {{ detail.prevision | currency: 'XOF' }}
                     </td>
-                    <td style="color: red;">
-                        {{ repartition?.sum_amount_used | currency: 'XOF' }}
+                    <td style="color: red; font-weight: bold;" class="font-size-16">
+                        {{ detail.amount_used | currency: 'XOF' }}
                     </td>
-                    <td style="width: 12rem; font-family: 'Poppins';"
+                    <td>
+                        {{ (detail.prevision + detail.envelope_help) - detail.amount_used | currency: 'XOF' }}
+                    </td>
+                    <td>
+                        {{ detail.envelope_help | currency: 'XOF' }}
+                    </td>
+                    <!-- <td style="width: 12rem;"
                         [ngClass]="{'solde_positif': (repartition?.rep_amount - repartition?.sum_amount_used) > 0,
                         'solde_negatif': (repartition?.rep_amount - repartition?.sum_amount_used) < 0,
                         'solde_nul': (repartition?.rep_amount - repartition?.sum_amount_used) == 0 }">
                         {{ (repartition?.rep_amount -
                         repartition?.sum_amount_used) | currency: 'XOF' }}
-                    </td>
+                    </td> -->
                     <td>
                         <button type="button"
                             class="btn btn-soft-light btn-sm w-xs waves-effect btn-label waves-light"><i
@@ -285,7 +301,7 @@
 
                     <td>
                         <button type="button"
-                            (click)="detailExpensesByCategory(exlargeModal, repartition)"
+                            (click)="detailExpensesByCategory(exlargeModal, detail)"
                             class="btn btn-info waves-effect waves-light">Détails</button>
                     </td>
 
@@ -417,8 +433,8 @@
                             formControlName="repartition_id" (change)="getRepId()"
                             [ngClass]="{'is-invalid': expense_form.get('repartition_id')?.touched && !expense_form.get('repartition_id')?.valid}">
 
-                            <option *ngFor="let item of repartitions"
-                                value="{{item.id}}">{{item.rep_designation}}</option>
+                            <option *ngFor="let item of exp_budget"
+                                value="{{item.repartition_id}}">{{item.category?.designation}}</option>
                         </select>
 
                         @if(expense_form.get('repartition_id')?.touched &&

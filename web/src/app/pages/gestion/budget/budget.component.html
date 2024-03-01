@@ -94,8 +94,7 @@
     </div>
 </div>
 
-<div class="row" *ngIf="!display_form" ngxUiLoaderBlurred
-    [loaderId]="'loader-spin'">
+<div class="row" *ngIf="!display_form">
     <ng-container *ngFor="let budget of budgets">
         <div class="col-xl-3 col-sm-6">
             <div class="card text-center">
@@ -162,8 +161,7 @@
             <!-- end card -->
         </div>
     </ng-container>
-    <ngx-ui-loader overlayColor="rgba(225,220,220,0.8)" [bgsOpacity]="3"
-    [loaderId]="'loader-spin'"></ngx-ui-loader>
+    
     <!-- end row -->
 
 </div>

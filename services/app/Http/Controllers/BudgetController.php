@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Budget;
 use App\Models\Category;
+use App\Models\Envelope;
 use App\Models\Expense;
+use App\Models\ExpenseBudget;
+use App\Models\HistoryEnvelope;
 use App\Models\Income;
 use App\Models\IncomeBudget;
 use App\Models\Month;
@@ -401,15 +404,18 @@ class BudgetController extends Controller
             $data['incomes'] = IncomeBudget::with(['income', 'budget'])->where('budget_id', $id)->where('create_id', getUserId())->get();
             $repartitions = Repartition::with(['category'])->where('budget_id', $id)->where('create_id', getUserId())->get();
             $expenses = Expense::with(['repartition', 'management_unit'])->where('create_id', getUserId())->orderBy('id', 'desc')->get();
+
+            $exp_budget = ExpenseBudget::with(['category'])->where('budget_id', $id)->where('create_id', getUserId())->get();
+
             // Somme des revenus de ce budget
             $data['total_sum_incomes_recup'] = 0;
-            // Somme des charges fixes de ce budget
+            // // Somme des charges fixes de ce budget
             $data['total_sum_cf_recup'] = 0;
-            // Somme des charges variables de ce budget
+            // // Somme des charges variables de ce budget
             $data['total_sum_cv_recup'] = 0;
-            // Somme des épargnes de ce budget
+            // // Somme des épargnes de ce budget
             $data['total_sum_saving_recup'] = 0;
-            // Montant total utilisé par répartition
+            // // Montant total utilisé par répartition
             $data['total_fixed_sum_used_by_rep'] = 0;
             $data['total_variable_sum_used_by_rep'] = 0;
             $data['total_saving_sum_used_by_rep'] = 0;
@@ -442,6 +448,7 @@ class BudgetController extends Controller
                     $data['total_sum_saving_recup'] += $rep->rep_amount;
                 }
                 $_data['rep_designation'] = $rep->category->designation;
+                $_data['category_id'] = $rep->category->id;
                 $data['categories'][] = $rep->category->designation;
                 $_data['sum_amount_used'] = 0;
                 foreach ($expenses as $exp) {
@@ -493,7 +500,7 @@ class BudgetController extends Controller
             $data['total_fixed_balance_by_rep'] = $data['total_sum_cf_recup'] - $data['total_fixed_sum_used_by_rep'];
             $data['total_variable_balance_by_rep'] = $data['total_sum_cv_recup'] - $data['total_variable_sum_used_by_rep'];
             $data['total_saving_balance_by_rep'] = $data['total_sum_saving_recup'] - $data['total_saving_sum_used_by_rep'];
-            //Log::info($data);
+            $data['exp_budget'] = $exp_budget;
             return response()->json([
                 'data' => $data,
                 'message' => 'Détails du budget',
@@ -571,11 +578,22 @@ class BudgetController extends Controller
             if (!$budget->is_shared) {
                 DB::beginTransaction();
                 foreach ($request->items as $item) {
-                    Repartition::create([
+                    $current_rep = Repartition::create([
                         'id' => generateDBTableId(20, "App\Models\Repartition"),
                         'budget_id' => $budget_id,
                         'category_id' => $item['category_id'],
                         'rep_amount' => $item['rep_amount'],
+                        'create_id' => getUserId()
+                    ]);
+
+                    ExpenseBudget::create([
+                        'budget_id' => $budget_id,
+                        'repartition_id' => $current_rep->id,
+                        'prevision' => $item['rep_amount'],
+                        'amount_used' => 0,
+                        'type' => 'TEST',
+                        'category_id' => $item['category_id'],
+                        'envelope_help' => 0,
                         'create_id' => getUserId()
                     ]);
                 }
@@ -584,6 +602,7 @@ class BudgetController extends Controller
                 $budget->is_shared = 1;
                 $budget->total_incomes = $budget->global_amount - $request->distribution_form['remaining_amount'];
                 $budget->balance = $budget->global_amount - $request->distribution_form['remaining_amount'];
+                $budget->is_active = 1;
                 $res = $budget->update();
 
                 if ($res) {
@@ -618,6 +637,10 @@ class BudgetController extends Controller
                             $amount_to_update_remaining -= $rep['rep_amount'];
                             // Incrémenter
                             $compteur++;
+
+                            $exp_bud = ExpenseBudget::where('repartition_id', $rep->id)->where('create_id', getUserId())->first();
+                            $exp_bud->prevision = $item['rep_amount'];
+                            $exp_bud->save();
                         }
                     }
                 }
@@ -639,7 +662,18 @@ class BudgetController extends Controller
                             'rep_amount' => $item['rep_amount'],
                             'create_id' => getUserId()
                         ]);
-                        if (!$new_rep) {
+
+                        $ex_b = ExpenseBudget::create([
+                            'budget_id' => $budget_id,
+                            'repartition_id' => $current_rep->id,
+                            'prevision' => $item['rep_amount'],
+                            'amount_used' => 0,
+                            'type' => 'TEST',
+                            'category_id' => $item['category_id'],
+                            'envelope_help' => 0,
+                            'create_id' => getUserId()
+                        ]);
+                        if (!$new_rep || $ex_b) {
                             return response()->json([
                                 'data' => [],
                                 'message' => 'Une erreur interne est survenue. Veuillez réessayer.',
@@ -670,11 +704,15 @@ class BudgetController extends Controller
                                 'status' => 500
                             ]);
                         }
+
+                        $exp_bud2 = ExpenseBudget::where('repartition_id', $rep->id)->where('create_id', getUserId())->first();
+                        $exp_bud2->delete();
+
                         // Récupération temporaire du montant de la catégorie à supprimer
                         $temp_amount_for_rep_to_delete = $rep['rep_amount'];
                         // On supprime la répartition
                         $rep_deleted = $rep->delete();
-                        if (!$rep_deleted) {
+                        if (!$rep_deleted || !$exp_bud2) {
                             return response()->json([
                                 'data' => [],
                                 'message' => 'Une erreur interne est survenue. Veuillez réessayer.',
@@ -689,7 +727,7 @@ class BudgetController extends Controller
 
                 $budget->remaining_amount = $amount_to_update_remaining;
                 $budget->total_incomes = $budget->global_amount - $amount_to_update_remaining;
-                $budget->balance = $budget->global_amount - $amount_to_update_remaining - $budget->total_expenses;              
+                $budget->balance = $budget->global_amount - $amount_to_update_remaining - $budget->total_expenses;
                 $resp = $budget->save();
 
                 if ($resp) {
@@ -1244,11 +1282,80 @@ class BudgetController extends Controller
     {
         try {
             $years = Budget::distinct()->whereNotIn('year_budget', [date('Y')])->orderBy('year_budget', 'desc')->where('create_id', getUserId())->get('year_budget');
-            Log::info($years);
             return response()->json([
                 'data' => $years,
                 'status' => 200
             ]);
+        } catch (Exception $ex) {
+            Log::error($ex->getMessage());
+            return response()->json([
+                'data' => [],
+                'message' => 'Une erreur interne est survenue',
+                'status' => 500
+            ]);
+        }
+    }
+
+    public function closeBudget(Request $request)
+    {
+        try {
+            $budget_repartitions = $request->budget_repartitions;
+            Log::info($budget_repartitions);
+            // Log::info('-------------');
+            // Log::info($request->budget_id);
+            $budget = Budget::where('id', $request->budget_id)->where('create_id', getUserId())->first();
+
+            if (!$budget) {
+                return response()->json([
+                    'data' => [],
+                    'message' => 'Aucun budget trouvé.',
+                    'status' => 300
+                ]);
+            }
+
+            if ($budget) {
+                DB::beginTransaction();
+                //$all_categories_in_envelope = Envelope::where('create_id', getUserId())->get('category_id');
+                //$all_repartitions_for_budgets = Repartition::where('budget_id', $request->budget_id)->where('create_id', getUserId())->get('category_id');
+
+                //Log::info($all_repartitions_for_budgets);
+                $budget->is_closed = 1;
+                $budget->update();
+
+                foreach ($budget_repartitions as $rep) {
+                    $rest = $rep['prevision'] - $rep['amount_used'];
+                    if ($rest > 0) {
+                        $envelope_categ = Envelope::where('category_id', $rep['category_id'])->where('create_id', getUserId())->first();
+                        if ($envelope_categ) {
+                            $envelope_categ->envelope_amount += $rest;
+                            $envelope_categ->save();
+                        }
+
+                        if (!$envelope_categ) {
+                            Envelope::create([
+                                'category_id' => $rep['category_id'],
+                                'create_id' => getUserId(),
+                                'envelope_amount' => $rest
+                            ]);
+                        }
+
+                        HistoryEnvelope::create([
+                            'type' => 'Entrée',
+                            'create_id' => getUserId(),
+                            'category_id' => $rep['category_id'],
+                            'env_amount' => $rest,
+                            'from_budget' => $budget->id,
+                            'to_budget' => null,
+                        ]);
+                    }
+                }
+
+                DB::commit();
+                return response()->json([
+                    'message' => 'Budget clôturé avec succès',
+                    'status' => 200
+                ]);
+            }
         } catch (Exception $ex) {
             Log::error($ex->getMessage());
             return response()->json([

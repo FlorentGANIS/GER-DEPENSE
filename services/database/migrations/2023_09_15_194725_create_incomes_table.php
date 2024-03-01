@@ -15,7 +15,7 @@ return new class extends Migration
             $table->char('id', 20)->primary();
             $table->string('label', 50);
             $table->boolean('status')->default(true);
-            $table->char('create_id')->nullable();
+            $table->char('create_id');
             $table->char('update_id')->nullable();
             $table->timestamps();
             
