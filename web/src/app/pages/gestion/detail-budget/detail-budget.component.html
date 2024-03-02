@@ -269,16 +269,18 @@
                         {{repartition.rep_designation}}
                     </td>
                     <td>
-                        {{ repartition.category?.type }}
+                        {{ repartition?.type_charge }}
                     </td>
 
                     <td>
                         {{ repartition.prevision | currency: 'XOF' }}
                     </td>
-                    <td style="color: red; font-weight: bold;" class="font-size-16">
+                    <td style="color: red; font-weight: bold;" class="font-size-15">
                         {{ repartition.amount_used | currency: 'XOF' }}
                     </td>
-                    <td>
+                    <td class="font-size-15" [ngClass]="{'solde_positif': (repartition.prevision + repartition.envelope_help) - repartition.amount_used > 0,
+                    'solde_negatif': (repartition.prevision + repartition.envelope_help) - repartition.amount_used < 0,
+                    'solde_nul': (repartition.prevision + repartition.envelope_help) - repartition.amount_used == 0,}">
                         {{ (repartition.prevision + repartition.envelope_help) - repartition.amount_used | currency: 'XOF' }}
                     </td>
                     <td>

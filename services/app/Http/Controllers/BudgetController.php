@@ -213,68 +213,7 @@ class BudgetController extends Controller
                 ]);
             }
         }
-        // else 
-        // {
-        //     $id = $request->id;
-        //     try {
-        //         $budget = Budget::where('id', $id)->where('create_id', getUserId())->first();
-        //         if (!$budget) {
-        //             return response()->json([
-        //                 'data' => $budget,
-        //                 'message' => 'Ce budget n\'existe plus dans le système.',
-        //                 'status' => 515
-        //             ]);
-        //         }
-
-
-        //         DB::beginTransaction();
-
-        //         $incomes = IncomeBudget::with(['income'])->where('budget_id', $request->id)->where('create_id', getUserId())->get();
-
-        //         foreach ($incomes as $inc) {
-        //             $inc->delete();
-        //         }
-
-        //         foreach ($request->incomes as $value) {
-        //             IncomeBudget::create([
-        //                 'ib_amount' => $value['income_amount'],
-        //                 'budget_id' => $budget->id,
-        //                 'income_id' => $value['income_id'],
-        //                 'create_id' => getUserId()
-        //             ]);
-        //         }
-        //         foreach ($request->incomes as $income) {
-        //             $global_amount += $income['income_amount'];
-        //         }
-
-        //         $reps = Repartition::where('budget_id', $request->id)->where('create_id', getUserId())->get();
-        //         $total_reps_amount = 0;
-        //         foreach ($reps as $rep) {
-        //             $total_reps_amount += $rep->rep_amount;
-        //         }
-        //         $budget->global_amount = $global_amount;
-        //         $budget->remaining_amount = $global_amount - $total_reps_amount;
-        //         $budget->name = $request->name;
-        //         $budget->start_date = $request->start_date;
-        //         $budget->end_date = $request->end_date;
-        //         $budget->save();
-        //         DB::commit();
-
-
-        //         return response()->json([
-        //             'data' => '',
-        //             'message' => 'Mise à jour effectuée avec succès.',
-        //             'status' => 200
-        //         ]);
-        //     } catch (Exception $e) {
-        //         Log::error($e->getMessage());
-        //         return response()->json([
-        //             'data' => [],
-        //             'message' => 'Une erreur interne est survenue',
-        //             'status' => 500
-        //         ]);
-        //     }
-        // }
+      
     }
 
     public function  edit(Request $request)
@@ -1193,7 +1132,7 @@ class BudgetController extends Controller
 
     public function deleteIncomeFromBudget(Request $request)
     {
-
+        Log::info('azertyui oui oui');
         try {
             $budget_id = $request->budget_id;
             $id = $request->id;
