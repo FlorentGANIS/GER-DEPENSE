@@ -9,8 +9,8 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <div>
-                        <h5 class="card-title">{{ budget?.month?.label }} {{
-                            budget?.year_budget }}</h5>
+                        <h3 class="card-title">{{ budget?.month?.label }} {{
+                            budget?.year_budget }}</h3>
                     </div>
                 </div>
 
@@ -161,8 +161,8 @@
                 <p>Aucune pour le moment !</p>
             </ng-container>
             <ng-container *ngFor="let categ of categories">
-                <span class="font-size-20 pe-1"><span
-                        class="badge bg-light-subtle text-black"><i
+                <span class="font-size-20 pe-1 p-1"><span
+                        class="badge bg-light-subtle text-black"> <i
                             class="mdi mdi-tag-outline"></i>{{ categ
                         }}</span></span>
             </ng-container>
@@ -321,6 +321,25 @@
 </ng-template>
 
 <ng-template #GraphicTab>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">Prévisions - Dépenses</h4>
+                </div>
+                <div class="card-body">
+                    <apx-chart class="apex-charts" dir="ltr" [series]="prevision_expense_chart.series"
+                        [chart]="prevision_expense_chart.chart" [plotOptions]="prevision_expense_chart.plotOptions"
+                        [yaxis]="prevision_expense_chart.yaxis" [grid]="prevision_expense_chart.grid" [tooltip]="prevision_expense_chart.tooltip"
+                        [stroke]="prevision_expense_chart.stroke" [dataLabels]="prevision_expense_chart.dataLabels"
+                        [xaxis]="prevision_expense_chart.xaxis" [colors]="prevision_expense_chart.colors" [fill]="prevision_expense_chart.fill">
+                    </apx-chart>
+                </div>
+            </div>
+            <!--end card-->
+        </div>
+    </div>
 
 </ng-template>
 

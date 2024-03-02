@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { ChartType } from 'src/app/shared/apex.model';
 import { BudgetService } from 'src/app/shared/services/budget.service';
 import { ExpenseService } from 'src/app/shared/services/expense.service';
 import { IncomeService } from 'src/app/shared/services/income.service';
@@ -35,11 +36,13 @@ export class DetailBudgetComponent implements OnInit {
 
   total_variable_sum_used_by_rep: number = 0; total_variable_balance_by_rep: number = 0; total_saving_sum_used_by_rep: number = 0; total_saving_balance_by_rep: number = 0;
 
-  repartition_expense: any; p2: number = 1; exp_budget: any;
-  
+  repartition_expense: any; p2: number = 1; prevision_expense_chart!: ChartType; listReps: any[] = [];
+
   constructor(private router: Router, private route: ActivatedRoute, private fb: FormBuilder, private income_service: IncomeService,
     private budget_service: BudgetService, private modalService: NgbModal, private expense_service: ExpenseService, private toastr: ToastrService
-  ) { }
+  ) {
+    this.initChart();
+  }
 
   ngOnInit(): void {
     this.breadCrumbItems = [
@@ -55,6 +58,34 @@ export class DetailBudgetComponent implements OnInit {
     this.initExpenseForm();
   }
 
+  initChart(listReps: any = [], listPrevisions: any = [], listExpenses: any = []) {
+    this.prevision_expense_chart = {
+      chart: { height: 350, type: "bar", toolbar: { show: !1 } },
+      plotOptions: { bar: { horizontal: !1, columnWidth: "45%" } },
+      dataLabels: { enabled: !1 },
+      stroke: { show: !0, width: 2, colors: ["transparent"] },
+      series: [
+        { name: "Prévisions", data: listPrevisions },
+        { name: "Dépenses", data: listExpenses },
+    ],
+      colors: ['#2ab57d', '#fd625e'],
+      xaxis: {
+        categories: listReps,
+      },
+      yaxis: { title: { text: "Montants (F CFA)", style: { fontWeight: "500" } } },
+      grid: { borderColor: "#f1f1f1" },
+      fill: { opacity: 1 },
+      tooltip: {
+        y: {
+          formatter: (val: string) => {
+            return val + ' F CFA';
+          }
+        }
+      }
+    };
+
+  }
+
   private updateExpenseAmount() {
     let qte = this.expense_form.get('quantity')?.value;
     let price = this.expense_form.get('unit_price')?.value;
@@ -65,6 +96,7 @@ export class DetailBudgetComponent implements OnInit {
       exp_amount: total
     });
   }
+
 
   initExpenseForm() {
     this.expense_form = this.fb.group({
@@ -126,7 +158,6 @@ export class DetailBudgetComponent implements OnInit {
           this.incomes = v.data.incomes;
           this.repartitions = v.data.others_data;
           //this.exp_budget = v.data.exp_budget;
-          console.log(this.repartitions)
           this.total_sum_incomes = v.data.total_sum_incomes_recup;
           this.total_fixed_charges = v.data.total_sum_cf_recup;
           this.total_variable_charges = v.data.total_sum_cv_recup;
@@ -138,6 +169,15 @@ export class DetailBudgetComponent implements OnInit {
           this.total_variable_balance_by_rep = v.data.total_variable_balance_by_rep;
           this.total_saving_balance_by_rep = v.data.total_saving_balance_by_rep;
 
+          let listReps: any = [];
+          let listPrevisions: any = [];
+          let listExpenses: any = [];
+          this.repartitions.forEach((element: any) => {
+            listReps.push(element.rep_designation);
+            listPrevisions.push(element.prevision);
+            listExpenses.push(element.amount_used);
+          });
+          this.initChart(listReps, listPrevisions, listExpenses);
           this.is_loading = false;
         },
 
@@ -168,7 +208,7 @@ export class DetailBudgetComponent implements OnInit {
     price_control?.updateValueAndValidity();
   }
 
-  closeForm(){
+  closeForm() {
     this.modalService.dismissAll();
     this.expense_form.reset();
   }
@@ -188,7 +228,7 @@ export class DetailBudgetComponent implements OnInit {
     this.modalService.open(exlargeModal, { size: 'xl', windowClass: 'modal-holder', centered: true });
   }
 
-  
+
   openExpenseModal(contentExpense: any) {
     this.modalService.open(contentExpense, { centered: true });
   }
@@ -217,7 +257,7 @@ export class DetailBudgetComponent implements OnInit {
           if (v.status == 200) {
             this.expense_form.reset();
             this.with_detail = false;
-            if(this.invoice){
+            if (this.invoice) {
               this.resetInputFile();
             }
             this.showSuccess(this.message);
@@ -256,7 +296,7 @@ export class DetailBudgetComponent implements OnInit {
       confirmButtonText: 'Oui'
     }).then(result => {
       if (result.value) {
-       //this.startLoader();
+        //this.startLoader();
         this.income_service.delete({ 'id': income_id, 'budget_id': this.id }).subscribe({
           next: (res: any) => {
             this.message = res.message;
@@ -293,7 +333,7 @@ export class DetailBudgetComponent implements OnInit {
     this.invoice = event.target.files[0];
   }
 
-  resetInputFile(){
+  resetInputFile() {
     this.global_event.target.value = "";
   }
 
@@ -309,7 +349,7 @@ export class DetailBudgetComponent implements OnInit {
       confirmButtonText: 'Oui'
     }).then(result => {
       if (result.value) {
-       //this.startLoader();
+        //this.startLoader();
         this.budget_service.closeBudget({ 'budget_id': this.id, 'budget_repartitions': this.repartitions }).subscribe({
           next: (res: any) => {
             this.message = res.message;
@@ -332,5 +372,7 @@ export class DetailBudgetComponent implements OnInit {
       }
     });
   }
+
+
 
 }

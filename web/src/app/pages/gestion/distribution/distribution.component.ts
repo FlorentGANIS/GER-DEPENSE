@@ -112,7 +112,7 @@ export class DistributionComponent implements OnInit {
   }
 
   removeCategory(category: any, index: number) {
-
+    console.log(this.categories_already_seleted)
     // Recherche de la catégorie à supprimer de la liste des items affichés dans la liste des catégories déjà ajoutées
     this.categories_already_seleted.forEach((elt, idx) => {
       // Si catégorie trouvée
