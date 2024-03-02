@@ -52,6 +52,7 @@
     "firebase": "^10.7.0",
     "flatpickr": "^4.6.13",
     "jasmine-core": "^5.1.1",
+    "jquery": "3.6.0",
     "karma": "^6.4.2",
     "karma-coverage": "^2.2.1",
     "karma-jasmine": "^5.1.0",
@@ -90,6 +91,7 @@
     "@angular/localize": "^17.0.5",
     "@types/chart.js": "^2.9.41",
     "@types/file-saver": "^2.0.7",
+    "@types/jquery": "^3.5.29",
     "karma-chrome-launcher": "^3.2.0"
   }
 }

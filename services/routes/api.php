@@ -109,7 +109,7 @@ Route::group(['prefix' => 'envelope'], function(){
 
 // Frame
 Route::get('expense/get-file-path/{id}', function ($id) {
-    $expense = Expense::find($id);
+    $expense = Expense::where('id', $id)->first();
     $file_path = 'storage/'.$expense->invoice_path;
     return response()->file(public_path($file_path));
     

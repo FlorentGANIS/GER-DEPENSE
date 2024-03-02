@@ -148,7 +148,8 @@ class ExpenseController extends Controller
                 DB::beginTransaction();
                 $invoice = $request->invoice_path;
                 if ($invoice != 'undefined' || $invoice == '') {
-                    $invoice_path = $invoice->storeAs('documents', date('His') . '_' . $invoice->getClientOriginalName(), 'public');
+
+                    $invoice_path = $invoice->storeAs('documents', date('His').'.'.$invoice->getClientOriginalExtension(), 'public');
                 } else {
                     $invoice_path = null;
                 }
@@ -159,7 +160,7 @@ class ExpenseController extends Controller
 
                 $exp_budget = ExpenseBudget::where('repartition_id', $request->repartition_id)->where('create_id', getUserId())->first();
                 $balance = $exp_budget->prevision - $exp_budget->amount_used + $exp_budget->envelope_help;
-               // Si le solde est supérieur au montant à dépenser
+                // Si le solde est supérieur au montant à dépenser
                 if ($balance > $exp_amount) {
                     $exp_budget->amount_used += $exp_amount;
                 }
@@ -167,18 +168,19 @@ class ExpenseController extends Controller
 
                 // Si le solde est inférieur au montant à dépenser
                 if ($balance <= $exp_amount || $balance == 0) {
-                    
+                  
                     if ($balance >= 0) {
                         // Montant restant à trouver après avoir vidé la prévision
                         $temp_amount_to_find = $exp_amount - $balance;
                     }
                     $envelope = Envelope::where('category_id', $exp_budget->category_id)->where('create_id', getUserId())->first();
                     // S'il existe d'enveloppe
-                    if ($envelope && $envelope->envelope_amount > 0) {                        
+                    if ($envelope && $envelope->envelope_amount > 0) {
                         if ($envelope->envelope_amount >= $temp_amount_to_find) {
                             $envelope->envelope_amount -= $temp_amount_to_find;
                             $exp_budget->envelope_help += $temp_amount_to_find;
                             $exp_budget->amount_used += $exp_amount;
+                           
                         }
 
                         if ($envelope->envelope_amount > 0 && $envelope->envelope_amount < $temp_amount_to_find) {
@@ -187,9 +189,6 @@ class ExpenseController extends Controller
                             $exp_budget->envelope_help += $envelope->envelope_amount;
                             $exp_budget->amount_used += $exp_amount;
                         }
-
-
-                        $envelope->update();
 
                         HistoryEnvelope::create([
                             'type' => 'Sortie',
@@ -200,9 +199,12 @@ class ExpenseController extends Controller
                             'to_budget' => $request->budget_id,
                         ]);
                     }
-                    
+
+                    if (!$envelope) {
+                        $exp_budget->amount_used += $exp_amount;
+                    }
                 }
-                
+
 
                 $exp_budget->update();
                 $expense = Expense::create(array_merge([
@@ -302,7 +304,6 @@ class ExpenseController extends Controller
 
     public function delete(Request $request)
     {
-        Log::info($request->id);
         if (!$request->id) {
             return response()->json([
                 'data' => [],

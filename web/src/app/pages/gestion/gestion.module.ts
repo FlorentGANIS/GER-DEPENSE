@@ -27,6 +27,7 @@ import { SavingComponent } from './saving/saving.component';
 import { EnvelopeComponent } from './envelope/envelope.component';
 import { HistoryEnvelopeComponent } from './history-envelope/history-envelope.component';
 import { ReplaceEmpty } from 'src/app/shared/pipes/replace-empty.pipe';
+import { UrlPipe } from 'src/app/shared/pipes/url.pipe';
 
 
 
@@ -34,7 +35,7 @@ import { ReplaceEmpty } from 'src/app/shared/pipes/replace-empty.pipe';
   declarations: [DashboardComponent, BudgetComponent, DetailBudgetComponent,
   DistributionComponent, ExpenseComponent, FixedChargeComponent, IncomeComponent, SavingComponent,
 RecapComponent, StatisticsComponent, StatisticByExpenseComponent, VariableChargeComponent,
-EnvelopeComponent, HistoryEnvelopeComponent, ReplaceEmpty],
+EnvelopeComponent, HistoryEnvelopeComponent, ReplaceEmpty, UrlPipe],
   imports: [
     CommonModule,
     WidgetModule,
