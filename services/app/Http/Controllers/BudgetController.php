@@ -1207,7 +1207,7 @@ class BudgetController extends Controller
 
                 $_data[] = $child;
             }
-            Log::info($data);
+      
             return response()->json([
                 'data' => $_data,
                 'message' => 'Récap des budgets sur le dashboard',

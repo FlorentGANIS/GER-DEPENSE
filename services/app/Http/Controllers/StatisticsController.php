@@ -36,13 +36,12 @@ class StatisticsController extends Controller
         $reps = Repartition::with('category')->where('budget_id', $budget->id)->where('create_id', getUserId())->get();
 
         $data = [];
-        $temp = [];
-        foreach ($reps as $rep) {
-            $temp['name'] = $rep->category->designation;
-            $temp['value'] = $rep->rep_amount;
 
-            $data[] = $temp;
+        foreach ($reps as $rep) {
+            $data['labels'][] = $rep->category->designation;
+            $data['amounts'][] = $rep->rep_amount;
         }
+        
         return response()->json([
             'data' => $data,
             'message' => 'Stat.',
@@ -72,19 +71,19 @@ class StatisticsController extends Controller
        
         $expenses = Expense::where('create_id', getUserId())->orderBy('id', 'desc')->get();
 
-        $data = [];
+        $data['labels'] = [];
 
         foreach ($reps as $rep) {
-            $temp = [];
-            $temp['name'] = $rep->category->designation;
-            $temp['value'] = 0;
+            $data['labels'][] = $rep->category->designation;
+            $amount_by_rep = 0;
+           
             foreach ($expenses as $exp) {
                 if ($exp->repartition_id === $rep->id) {
                     // Montant total utilisé par répartition
-                    $temp['value'] += $exp->exp_amount;
+                    $amount_by_rep += $exp->exp_amount;
                 }
             }
-            $data[] = $temp;
+            $data['amounts'][] = $amount_by_rep;
         }
 
         return response()->json([

@@ -124,8 +124,7 @@ export class DashboardComponent implements OnInit {
               this.incomes_data.push(element?.total_incomes)
               this.expenses_data.push(element?.total_expenses)
             });
-            console.log(this.incomes_data)
-            // console.log(this.expenses_data)
+          
             this.initChart(this.incomes_data, this.expenses_data);
             
           }
@@ -151,7 +150,6 @@ export class DashboardComponent implements OnInit {
             this.fixed_charges = v.data.fixed_charges;
             this.variables_charges = v.data.variable_charges;
             //this.budget = v.data.current_month_data;
-            console.log(this.budgets)
           }
         },
         error: (e) => {

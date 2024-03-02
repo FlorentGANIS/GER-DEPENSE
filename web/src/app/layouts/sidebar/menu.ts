@@ -38,6 +38,28 @@ export const MENU: MenuItem[] = [
     },
 
     {
+        id: 80,
+        label: 'Statistiques',
+        icon: 'grid',
+        subItems: [
+            {
+                id: 81,
+                label: 'Par prévision',
+                link: '/gestion/stat/statistique-par-previsions',
+                parentId: 80
+            },
+            {
+                id: 82,
+                label: 'Par dépenses',
+                link: '/gestion/stat/statistique-par-depenses',
+                parentId: 80
+            },
+         
+        
+        ]
+    },
+
+    {
         id: 71,
         label: 'Configuration',
         icon: 'grid',
