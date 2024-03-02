@@ -74,7 +74,7 @@ export class DetailBudgetComponent implements OnInit {
         categories: listReps,
       },
       yaxis: { title: { text: "Montants (F CFA)", style: { fontWeight: "500" } } },
-      grid: { borderColor: "#f1f1f1" },
+      grid: { borderColor: "#17202A" },
       fill: { opacity: 1 },
       tooltip: {
         y: {
@@ -158,7 +158,7 @@ export class DetailBudgetComponent implements OnInit {
           this.total_amount_used_for_budget = v.data.total_amount_used;
           this.incomes = v.data.incomes;
           this.repartitions = v.data.others_data;
-          console.log(this.repartitions)
+          // console.log(this.repartitions)
           this.total_sum_incomes = v.data.total_sum_incomes_recup;
           this.total_fixed_charges = v.data.total_sum_cf_recup;
           this.total_variable_charges = v.data.total_sum_cv_recup;
@@ -224,7 +224,6 @@ export class DetailBudgetComponent implements OnInit {
   }
 
   detailExpensesByCategory(exlargeModal: any, repartition: any) {
-    console.log(repartition)
     this.repartition_expense = repartition;
     this.modalService.open(exlargeModal, { size: 'xl', windowClass: 'modal-holder', centered: true });
   }
@@ -264,7 +263,7 @@ export class DetailBudgetComponent implements OnInit {
           this.message = v.message;
           if (v.status == 200) {
             this.expense_form.reset();
-            this.with_detail = false;
+            //this.with_detail = false;
             if (this.invoice) {
               this.resetInputFile();
             }

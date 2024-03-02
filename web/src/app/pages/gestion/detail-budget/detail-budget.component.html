@@ -375,11 +375,11 @@
                     <tr>
                         <th style="width: 5%">#</th>
                         <th>Date</th>
+                        <th style="width: 25%;">Commentaire</th>
                         <th>Quantité</th>
                         <th>Prix Unitaire</th>
                         <th>Montant</th>
                         <th>Document</th>
-                        <th>Commentaire</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -401,6 +401,9 @@
                             'dd-MM-yyyy'}}
                         </td>
                         <td>
+                            {{expense?.comment}}
+                        </td>
+                        <td>
                             {{(expense?.quantity == null) ? "" :
                             expense?.quantity}}
                             {{(expense?.management_unit_id == null) ? "" :
@@ -420,13 +423,11 @@
                             <button type="button"
                                 (click)="displayApercu(contentViewFile, expense?.expense_id)"
                                 class="btn btn-soft-light btn-sm w-xs waves-effect btn-label waves-light"><i
-                                    class="bx bx-download label-icon"></i>
+                                    class="bx bx-show-alt label-icon"></i>
                                 Apperçu</button>
                         </td>
 
-                        <td>
-                            {{expense?.comment}}
-                        </td>
+                        
                         <td>
 
                         </td>
@@ -621,7 +622,7 @@
 <!-- Frame to pdf view -->
 <ng-template #contentViewFile let-modal>
     <div class="modal-header">
-        <h5 class="modal-title mt-0">Ajout </h5>
+        <h5 class="modal-title mt-0">Apperçu du fichier</h5>
         <button type="button" class="btn-close" aria-label="Close"
             (click)="modal.dismiss('Close click')">
         </button>
