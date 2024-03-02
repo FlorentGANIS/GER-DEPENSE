@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { OwlOptions } from 'ngx-owl-carousel-o';
-import * as am5 from '@amcharts/amcharts5';
-import * as am5map from "@amcharts/amcharts5/map";
-import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
-import am5geodata_worldLow from "@amcharts/amcharts5-geodata/worldLow";
+import { ChartType } from 'src/app/shared/apex.model';
 
 import { walletOverview, investedOverview, marketOverview, walletlineChart, tradeslineChart, investedlineChart, profitlineChart, recentActivity, News, transactionsAll, transactionsBuy, transactionsSell } from './data';
-import { ChartType } from './dashboard.model';
+import { BudgetService } from 'src/app/shared/services/budget.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,7 +24,7 @@ export class DashboardComponent implements OnInit {
   marketOverview!: ChartType;
   walletlineChart!: ChartType;
   tradeslineChart!: ChartType;
-  investedlineChart!: ChartType;
+  investedlineChart!: ChartType; prevision_expense!: ChartType;
   profitlineChart!: ChartType;
   recentActivity: any;
   News: any;
@@ -35,6 +32,10 @@ export class DashboardComponent implements OnInit {
   transactionsBuy: any;
   transactionsSell: any;
   num: number = 0;
+
+  budgets: any; incomes: any; fixed_charges: any; variables_charges: any; year: number = new Date().getFullYear();
+
+  budget: any; categories: any[] = []; is_loading: boolean = false; sum_total_used: number = 0; solde: number = 0;
   // Coin News Slider
   timelineCarousel: OwlOptions = {
     items: 1,
@@ -49,9 +50,14 @@ export class DashboardComponent implements OnInit {
       },
     }
   }
+  year_recap: any;
+  incomes_data: any[] = [];
+  expenses_data: any[] = [];
 
-  constructor() {
+  constructor(private budget_service: BudgetService) {
+    this.initChart();
   }
+
 
   option = {
     startVal: this.num,
@@ -73,8 +79,87 @@ export class DashboardComponent implements OnInit {
     /**
      * Fetches the data
      */
-  
+    this.countEntitiesApp();
+    this.getRecapForChart();
   }
 
-  
+  initChart(listPrevisions: any = [], listExpenses: any = []) {
+    this.prevision_expense = {
+      chart: { height: 350, type: "bar", toolbar: { show: !1 } },
+      plotOptions: { bar: { horizontal: !1, columnWidth: "45%" } },
+      dataLabels: { enabled: !1 },
+      stroke: { show: !0, width: 2, colors: ["transparent"] },
+      series: [
+        { name: "Prévisions", data: listPrevisions },
+        { name: "Dépenses", data: listExpenses },
+      ],
+      colors: ['#2ab57d', '#fd625e'],
+      xaxis: {
+        categories: [
+          'Jan', 'Fev', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Dec'
+        ],
+      },
+      yaxis: { title: { text: "Montants (F CFA)", style: { fontWeight: "500" } } },
+      grid: { borderColor: "#f1f1f1" },
+      fill: { opacity: 1 },
+      tooltip: {
+        y: {
+          formatter: (val: string) => {
+            return val + ' F CFA';
+          }
+        }
+      }
+    };
+
+  }
+
+  getRecapForChart() {
+
+    this.budget_service.racapChartDashboard({ year: null }).subscribe(
+      {
+        next: (v: any) => {
+          if (v.status == 200) {
+            this.year_recap = v.data;
+            this.year_recap.forEach((element: any) => {
+              this.incomes_data.push(element?.total_incomes)
+              this.expenses_data.push(element?.total_expenses)
+            });
+            console.log(this.incomes_data)
+            // console.log(this.expenses_data)
+            this.initChart(this.incomes_data, this.expenses_data);
+            
+          }
+
+        },
+        error: (e) => {
+          console.error(e);
+        },
+      }
+    );
+
+  }
+
+
+  countEntitiesApp() {
+    // this.is_loading = true;
+    this.budget_service.allInfosApp().subscribe(
+      {
+        next: (v: any) => {
+          if (v.status == 200) {
+            this.budgets = v.data.budgets;
+            this.incomes = v.data.incomes;
+            this.fixed_charges = v.data.fixed_charges;
+            this.variables_charges = v.data.variable_charges;
+            //this.budget = v.data.current_month_data;
+            console.log(this.budgets)
+          }
+        },
+        error: (e) => {
+          console.error(e);
+        },
+      }
+    );
+  }
+
+
 }

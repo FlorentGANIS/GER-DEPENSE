@@ -721,7 +721,7 @@ class BudgetController extends Controller
             $data['fixed_charges'] = Category::where('type', 'FIXE')->where('create_id', getUserId())->get();
             $data['variable_charges'] = Category::where('type', 'VARIABLE')->where('create_id', getUserId())->get();
 
-            $current_month = Month::where('month_number', date('n'))->first('id');
+           $current_month = Month::where('month_number', date('n'))->first('id');
 
             $data['current_month_data'] = Budget::with(['month'])->where('year_budget', date('Y'))->where('month_id', $current_month->id)->where('create_id', getUserId())->first();
 
@@ -1207,6 +1207,7 @@ class BudgetController extends Controller
 
                 $_data[] = $child;
             }
+            Log::info($data);
             return response()->json([
                 'data' => $_data,
                 'message' => 'Récap des budgets sur le dashboard',

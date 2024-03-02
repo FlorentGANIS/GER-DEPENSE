@@ -341,15 +341,15 @@
                 </div>
 
                 <div class="btn-group" role="group">
-                    <button type="button" *ngIf="budget?.status"
+                    <button type="button" *ngIf="budget?.status && !budget?.is_closed"
                         title="Répartir le budget"
                         [routerLink]="['/gestion/distribution/budget', budget?.budget_id]"
-                        class="btn btn-outline-dark text-truncate"><i
+                        class="btn btn-outline-secondary text-truncate"><i
                             class="uil uil-user me-1"></i>
                         Répartir</button>
                     <button type="button" (click)="createOrManageBudget(budget)"
                         title="{{budget?.status ? 'Détails du budget' : 'Créer le budget'}}"
-                        class="btn btn-outline-dark text-truncate"><i
+                        class="btn btn-outline-secondary text-truncate"><i
                             class="uil uil-envelope-alt me-1"></i>
                         {{budget?.status == 0 ? 'Créer' : 'Détails'}}</button>
 

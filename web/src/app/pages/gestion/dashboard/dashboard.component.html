@@ -9,9 +9,9 @@
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-6">
-                        <span class="text-muted mb-3 lh-1 d-block text-truncate">My Wallet</span>
+                        <span class="mb-3 lh-1 d-block font-size-16" style="font-weight: bold;">Budgets</span>
                         <h4 class="mb-3">
-                            $<span [countUp]="865.2" [options]="option" class="counter-value"></span>K
+                            {{budgets?.length}}
                         </h4>
                     </div>
 
@@ -20,8 +20,7 @@
                     </div>
                 </div>
                 <div class="text-nowrap">
-                    <span class="badge bg-success-subtle text-success">+$20.9k</span>
-                    <span class="ms-1 text-muted font-size-13">Since last week</span>
+                    <span class="ms-1 font-size-13">Enregistré{{ budgets?.length > 1 ? "s" :"" }} dans le système</span>
                 </div>
             </div><!-- end card body -->
         </div><!-- end card -->
@@ -34,9 +33,9 @@
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-6">
-                        <span class="text-muted mb-3 lh-1 d-block text-truncate">Number of Trades</span>
+                        <span class="mb-3 lh-1 d-block font-size-16" style="font-weight: bold;">Sources de revenus</span>
                         <h4 class="mb-3">
-                            <span [countUp]="6258" class="counter-value"></span>
+                            {{incomes?.length}}
                         </h4>
                     </div>
                     <div class="col-6">
@@ -44,8 +43,7 @@
                     </div>
                 </div>
                 <div class="text-nowrap">
-                    <span class="badge bg-danger-subtle text-danger">-29 Trades</span>
-                    <span class="ms-1 text-muted font-size-13">Since last week</span>
+                    <span class="ms-1 font-size-13">Enregistrée{{ incomes?.length > 1 ? "s" :"" }} dans le système</span>
                 </div>
             </div><!-- end card body -->
         </div><!-- end card -->
@@ -58,9 +56,9 @@
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-6">
-                        <span class="text-muted mb-3 lh-1 d-block text-truncate">Invested Amount</span>
+                        <span class="mb-3 lh-1 d-block font-size-16" style="font-weight: bold;">Charges fixes</span>
                         <h4 class="mb-3">
-                            $<span [countUp]="4.32" [options]="option" class="counter-value"></span>M
+                            {{fixed_charges?.length}}
                         </h4>
                     </div>
                     <div class="col-6">
@@ -68,8 +66,7 @@
                     </div>
                 </div>
                 <div class="text-nowrap">
-                    <span class="badge bg-success-subtle text-success">+ $2.8k</span>
-                    <span class="ms-1 text-muted font-size-13">Since last week</span>
+                    <span class="ms-1 font-size-13">Enregistrée{{ fixed_charges?.length > 1 ? "s" :"" }} dans le système</span>
                 </div>
             </div><!-- end card body -->
         </div><!-- end card -->
@@ -81,9 +78,9 @@
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-6">
-                        <span class="text-muted mb-3 lh-1 d-block text-truncate">Profit Ration</span>
+                        <span class="mb-3 lh-1 d-block font-size-16" style="font-weight: bold;">Charges variables</span>
                         <h4 class="mb-3">
-                            <span [countUp]="12.37" [options]="option" class="counter-value"></span>%
+                            {{variables_charges?.length}}
                         </h4>
                     </div>
                     <div class="col-6">
@@ -91,11 +88,28 @@
                     </div>
                 </div>
                 <div class="text-nowrap">
-                    <span class="badge bg-success-subtle text-success">+2.95%</span>
-                    <span class="ms-1 text-muted font-size-13">Since last week</span>
+                    <span class="ms-1 text-muted font-size-13">Enregistrée{{ variables_charges?.length > 1 ? "s" :"" }} dans le système</span>
                 </div>
             </div><!-- end card body -->
         </div><!-- end card -->
     </div><!-- end col -->
 </div><!-- end row-->
 
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Prévisions - Dépenses de l'année {{ year }}</h4>
+            </div>
+            <div class="card-body">
+                <apx-chart class="apex-charts" dir="ltr" [series]="prevision_expense.series"
+                    [chart]="prevision_expense.chart" [plotOptions]="prevision_expense.plotOptions"
+                    [yaxis]="prevision_expense.yaxis" [grid]="prevision_expense.grid" [tooltip]="prevision_expense.tooltip"
+                    [stroke]="prevision_expense.stroke" [dataLabels]="prevision_expense.dataLabels"
+                    [xaxis]="prevision_expense.xaxis" [colors]="prevision_expense.colors" [fill]="prevision_expense.fill">
+                </apx-chart>
+            </div>
+        </div>
+        <!--end card-->
+    </div>
+</div>
