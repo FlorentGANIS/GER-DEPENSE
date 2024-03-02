@@ -1,1 +1,76 @@
-<p>expense works!</p>
+<!-- start page title -->
+<app-pagetitle title="Liste de toutes les dépenses ({{ expenses?.length }})"
+    [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-sm-12">
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table ngxUiLoaderBlurred [loaderId]="'loader-spin'"
+                class="table table-striped align-middle datatable dt-responsive table-check nowrap datatables"
+                style="border-collapse: collapse; border-spacing: 0 8px; width: 100%;">
+
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th>Budget</th>
+                        <th>Catégorie</th>
+                        <th>Date dépense</th>
+                        <th>Montant</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="expenses?.length === 0">
+                        <tr>
+                            <td colspan="6">Aucune dépense
+                                trouvée.</td>
+                        </tr>
+                    </ng-container>
+                    <tr
+                        *ngFor="let expense of expenses | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+                        <td>
+                            {{i + 1}}
+                        </td>
+                        <td>
+                            {{ expense.repartition?.budget?.month?.label }}
+                        </td>
+                       
+                        <td>
+                            {{expense?.repartition?.category?.designation}}
+                        </td>
+
+                        <td>
+                            {{expense?.expense_date | date: 'dd-MM-yyyy'}}
+                        </td>
+
+                        <td>
+                            {{expense?.exp_amount | currency: 'XOF'}}
+                        </td>
+
+                        <td>
+                            <button type="button"
+                            class="btn btn-info waves-effect waves-light">Détails</button>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+            <div class="pagination-style">
+                <pagination-controls previousLabel="Précédent"
+                    nextLabel="Suivant"
+                    (pageChange)="p = $event"></pagination-controls>
+
+            </div>
+
+            <ngx-ui-loader overlayColor="rgba(225,220,220,0.8)" [bgsOpacity]="3"
+                [loaderId]="'loader-spin'"></ngx-ui-loader>
+
+        </div>
+        <!-- End table -->
+
+    </div>
+</div>

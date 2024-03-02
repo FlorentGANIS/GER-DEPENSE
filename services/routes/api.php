@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\EnvelopeController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FixedChargeController;
 use App\Http\Controllers\IncomeController;
@@ -98,6 +99,12 @@ Route::group(['prefix' => 'expense'], function(){
     Route::post('create', [ExpenseController::class, 'create']);
     Route::post('delete', [ExpenseController::class, 'delete']);
     Route::post('detail', [ExpenseController::class, 'detail']);
+});
+
+//Envelopes
+Route::group(['prefix' => 'envelope'], function(){
+    Route::get('list', [EnvelopeController::class, 'list']);
+    Route::post('history', [EnvelopeController::class, 'allHistories']);
 });
 
 // Frame

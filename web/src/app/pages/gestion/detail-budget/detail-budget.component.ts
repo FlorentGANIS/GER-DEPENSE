@@ -355,7 +355,7 @@ export class DetailBudgetComponent implements OnInit {
             this.message = res.message;
             if (res.status == 200) {
               this.showSuccess(this.message);
-              this.listIncomes();
+              this.budgetDetail();
               //this.stopLoader();
             } else {
               this.showError(this.message);
