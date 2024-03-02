@@ -402,12 +402,12 @@ class BudgetController extends Controller
                 ]);
             }
             $data['incomes'] = IncomeBudget::with(['income', 'budget'])->where('budget_id', $id)->where('create_id', getUserId())->get();
-            $repartitions = Repartition::with(['category'])->where('budget_id', $id)->where('create_id', getUserId())->get();
+            //$repartitions = Repartition::with(['category'])->where('budget_id', $id)->where('create_id', getUserId())->get();
             $expenses = Expense::with(['repartition', 'management_unit'])->where('create_id', getUserId())->orderBy('id', 'desc')->get();
 
             $exp_budget = ExpenseBudget::with(['category'])->where('budget_id', $id)->where('create_id', getUserId())->get();
 
-            // Somme des revenus de ce budget
+            // // Somme des revenus de ce budget
             $data['total_sum_incomes_recup'] = 0;
             // // Somme des charges fixes de ce budget
             $data['total_sum_cf_recup'] = 0;
@@ -421,7 +421,7 @@ class BudgetController extends Controller
             $data['total_saving_sum_used_by_rep'] = 0;
 
             $data['others_data'] = [];
-            $data['total_fixed_charges'] = 0;
+            //$data['total_fixed_charges'] = 0;
             $data['categories'] = [];
             $exps = [];
             $exps_by_rep = [];
@@ -432,28 +432,29 @@ class BudgetController extends Controller
                 $data['total_sum_incomes_recup'] += $income_for_bud->ib_amount;
             }
 
-            foreach ($repartitions as $rep) {
-                $_data['id'] = $rep->id;
-                $_data['rep_amount'] = $rep->rep_amount;
+            
+            // Original
+
+
+
+            foreach ($exp_budget as $rep) {
                 if ($rep->category->type == 'FIXE') {
                     $_data['type_charge'] = 'FIXE';
-                    $data['total_sum_cf_recup'] += $rep->rep_amount;
                 }
                 if ($rep->category->type == 'VARIABLE') {
                     $_data['type_charge'] = 'VARIABLE';
-                    $data['total_sum_cv_recup'] += $rep->rep_amount;
                 }
                 if ($rep->category->type == 'EPARGNE') {
                     $_data['type_charge'] = 'EPARGNE';
-                    $data['total_sum_saving_recup'] += $rep->rep_amount;
                 }
                 $_data['rep_designation'] = $rep->category->designation;
                 $_data['category_id'] = $rep->category->id;
+                $_data['prevision'] = $rep->prevision;
+                $_data['envelope_help'] = $rep->envelope_help;
                 $data['categories'][] = $rep->category->designation;
-                $_data['sum_amount_used'] = 0;
+                $_data['amount_used'] = $rep->amount_used;
                 foreach ($expenses as $exp) {
-
-                    if ($exp->repartition_id === $rep->id) {
+                    if ($exp->repartition_id === $rep->repartition_id) {
                         $exps['expense_id'] = $exp->id;
                         $exps['expense_date'] = $exp->expense_date;
                         $exps['exp_amount'] = $exp->exp_amount;
@@ -468,7 +469,7 @@ class BudgetController extends Controller
                         }
                         $exps['comment'] = ($exp->comment == NULL || $exp->comment == '') ? "" : $exp->comment;
                         // Montant total utilisé par répartition
-                        $_data['sum_amount_used'] += $exp->exp_amount;
+                        //$_data['sum_amount_used'] += $exp->exp_amount;
                         if ($exp->invoice_path == null || !isset($exp->invoice_path)) {
                             $exps['invoice_path'] = null;
                         } else {
@@ -479,21 +480,22 @@ class BudgetController extends Controller
                 }
 
                 $_data["expenses"] = $exps_by_rep;
-                $data['total_amount_used'] += $_data['sum_amount_used'];
+                //$data['total_amount_used'] += $_data['sum_amount_used'];
                 $data['others_data'][] = $_data;
+                //Log::info( $data['others_data']);
                 $exps_by_rep = [];
                 $_data = [];
             }
 
             foreach ($data['others_data'] as $other) {
                 if ($other['type_charge'] == 'FIXE') {
-                    $data['total_fixed_sum_used_by_rep'] += $other['sum_amount_used'];
+                    $data['total_fixed_sum_used_by_rep'] += $other['amount_used'];
                 }
                 if ($other['type_charge'] == 'VARIABLE') {
-                    $data['total_variable_sum_used_by_rep'] += $other['sum_amount_used'];
+                    $data['total_variable_sum_used_by_rep'] += $other['amount_used'];
                 }
                 if ($other['type_charge'] == 'EPARGNE') {
-                    $data['total_saving_sum_used_by_rep'] += $other['sum_amount_used'];
+                    $data['total_saving_sum_used_by_rep'] += $other['amount_used'];
                 }
             }
 
@@ -501,6 +503,7 @@ class BudgetController extends Controller
             $data['total_variable_balance_by_rep'] = $data['total_sum_cv_recup'] - $data['total_variable_sum_used_by_rep'];
             $data['total_saving_balance_by_rep'] = $data['total_sum_saving_recup'] - $data['total_saving_sum_used_by_rep'];
             $data['exp_budget'] = $exp_budget;
+            //$data['exp_budget']['all_expenses'] = $data['others_data'];
             return response()->json([
                 'data' => $data,
                 'message' => 'Détails du budget',

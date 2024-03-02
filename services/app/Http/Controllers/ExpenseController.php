@@ -190,7 +190,6 @@ class ExpenseController extends Controller
                             $exp_budget->amount_used += $exp_amount;
                         }
 
-                        if($envelope->envelope_amount < 0)
 
                         $envelope->update();
 

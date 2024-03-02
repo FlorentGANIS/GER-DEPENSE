@@ -254,35 +254,35 @@
                 </tr>
             </thead>
             <tbody>
-                <ng-container *ngIf="exp_budget?.length === 0">
+                <ng-container *ngIf="repartitions?.length === 0">
                     <tr>
                         <td colspan="8">Aucune catégorie de dépenses
                             trouvée.</td>
                     </tr>
                 </ng-container>
                 <tr
-                    *ngFor="let detail of exp_budget | paginate: {id: 'tableCategories', itemsPerPage: 10, currentPage: p }; let i = index">
+                    *ngFor="let repartition of repartitions | paginate: {id: 'tableCategories', itemsPerPage: 10, currentPage: p }; let i = index">
                     <td>
                         {{i + 1}}
                     </td>
                     <td>
-                        {{detail.category?.designation}}
+                        {{repartition.rep_designation}}
                     </td>
                     <td>
-                        {{ detail.category?.type }}
+                        {{ repartition.category?.type }}
                     </td>
 
                     <td>
-                        {{ detail.prevision | currency: 'XOF' }}
+                        {{ repartition.prevision | currency: 'XOF' }}
                     </td>
                     <td style="color: red; font-weight: bold;" class="font-size-16">
-                        {{ detail.amount_used | currency: 'XOF' }}
+                        {{ repartition.amount_used | currency: 'XOF' }}
                     </td>
                     <td>
-                        {{ (detail.prevision + detail.envelope_help) - detail.amount_used | currency: 'XOF' }}
+                        {{ (repartition.prevision + repartition.envelope_help) - repartition.amount_used | currency: 'XOF' }}
                     </td>
                     <td>
-                        {{ detail.envelope_help | currency: 'XOF' }}
+                        {{ repartition.envelope_help | currency: 'XOF' }}
                     </td>
                     <!-- <td style="width: 12rem;"
                         [ngClass]="{'solde_positif': (repartition?.rep_amount - repartition?.sum_amount_used) > 0,
@@ -301,7 +301,7 @@
 
                     <td>
                         <button type="button"
-                            (click)="detailExpensesByCategory(exlargeModal, detail)"
+                            (click)="detailExpensesByCategory(exlargeModal, repartition)"
                             class="btn btn-info waves-effect waves-light">Détails</button>
                     </td>
 

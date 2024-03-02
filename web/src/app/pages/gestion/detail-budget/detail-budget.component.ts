@@ -125,7 +125,7 @@ export class DetailBudgetComponent implements OnInit {
           this.total_amount_used_for_budget = v.data.total_amount_used;
           this.incomes = v.data.incomes;
           this.repartitions = v.data.others_data;
-          this.exp_budget = v.data.exp_budget;
+          //this.exp_budget = v.data.exp_budget;
           console.log(this.repartitions)
           this.total_sum_incomes = v.data.total_sum_incomes_recup;
           this.total_fixed_charges = v.data.total_sum_cf_recup;
@@ -310,7 +310,7 @@ export class DetailBudgetComponent implements OnInit {
     }).then(result => {
       if (result.value) {
        //this.startLoader();
-        this.budget_service.closeBudget({ 'budget_id': this.id, 'budget_repartitions': this.exp_budget }).subscribe({
+        this.budget_service.closeBudget({ 'budget_id': this.id, 'budget_repartitions': this.repartitions }).subscribe({
           next: (res: any) => {
             this.message = res.message;
             if (res.status == 200) {
