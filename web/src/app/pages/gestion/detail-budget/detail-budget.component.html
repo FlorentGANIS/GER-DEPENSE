@@ -433,8 +433,8 @@
                             formControlName="repartition_id" (change)="getRepId()"
                             [ngClass]="{'is-invalid': expense_form.get('repartition_id')?.touched && !expense_form.get('repartition_id')?.valid}">
 
-                            <option *ngFor="let item of exp_budget"
-                                value="{{item.repartition_id}}">{{item.category?.designation}}</option>
+                            <option *ngFor="let item of repartitions"
+                                value="{{item.repartition_id}}">{{item.rep_designation}}</option>
                         </select>
 
                         @if(expense_form.get('repartition_id')?.touched &&

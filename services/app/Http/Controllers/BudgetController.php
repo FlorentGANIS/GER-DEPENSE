@@ -448,6 +448,7 @@ class BudgetController extends Controller
                     $_data['type_charge'] = 'EPARGNE';
                 }
                 $_data['rep_designation'] = $rep->category->designation;
+                $_data['repartition_id'] = $rep->repartition_id;
                 $_data['category_id'] = $rep->category->id;
                 $_data['prevision'] = $rep->prevision;
                 $_data['envelope_help'] = $rep->envelope_help;

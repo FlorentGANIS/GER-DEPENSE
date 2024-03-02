@@ -159,34 +159,32 @@ class ExpenseController extends Controller
 
                 $exp_budget = ExpenseBudget::where('repartition_id', $request->repartition_id)->where('create_id', getUserId())->first();
                 $balance = $exp_budget->prevision - $exp_budget->amount_used + $exp_budget->envelope_help;
+               // Si le solde est supérieur au montant à dépenser
                 if ($balance > $exp_amount) {
                     $exp_budget->amount_used += $exp_amount;
                 }
                 $temp_amount_to_find = 0;
 
-                // Si le solde est supérieur au montant à dépenser
+                // Si le solde est inférieur au montant à dépenser
                 if ($balance <= $exp_amount || $balance == 0) {
-                    Log::info('est bien dedans');
+                    
                     if ($balance >= 0) {
+                        // Montant restant à trouver après avoir vidé la prévision
                         $temp_amount_to_find = $exp_amount - $balance;
                     }
                     $envelope = Envelope::where('category_id', $exp_budget->category_id)->where('create_id', getUserId())->first();
                     // S'il existe d'enveloppe
-                    if ($envelope) {
+                    if ($envelope && $envelope->envelope_amount > 0) {                        
                         if ($envelope->envelope_amount >= $temp_amount_to_find) {
-                            Log::info('est bien dedans 11111');
                             $envelope->envelope_amount -= $temp_amount_to_find;
                             $exp_budget->envelope_help += $temp_amount_to_find;
-                            Log::info('aaaaaaaaa : '.$temp_amount_to_find);
-                            Log::info('zerty : '.$exp_budget->envelope_help);
-                            Log::info('qerty : '.$balance);
                             $exp_budget->amount_used += $exp_amount;
                         }
 
                         if ($envelope->envelope_amount > 0 && $envelope->envelope_amount < $temp_amount_to_find) {
-                            Log::info('est bien dedans 22222');
-                            $temp2 = $exp_amount - $envelope->envelope_amount;
-                            $exp_budget->envelope_help += $temp2;
+                            // Montant à chercher après avoir épuisé celui de l'enveloppe
+                            //$temp2 = $exp_amount - $balance - $envelope->envelope_amount;
+                            $exp_budget->envelope_help += $envelope->envelope_amount;
                             $exp_budget->amount_used += $exp_amount;
                         }
 
@@ -204,7 +202,6 @@ class ExpenseController extends Controller
                     }
                     
                 }
-
                 
 
                 $exp_budget->update();
