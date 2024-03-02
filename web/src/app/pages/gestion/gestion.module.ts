@@ -26,6 +26,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { SavingComponent } from './saving/saving.component';
 import { EnvelopeComponent } from './envelope/envelope.component';
 import { HistoryEnvelopeComponent } from './history-envelope/history-envelope.component';
+import { ReplaceEmpty } from 'src/app/shared/pipes/replace-empty.pipe';
 
 
 
@@ -33,7 +34,7 @@ import { HistoryEnvelopeComponent } from './history-envelope/history-envelope.co
   declarations: [DashboardComponent, BudgetComponent, DetailBudgetComponent,
   DistributionComponent, ExpenseComponent, FixedChargeComponent, IncomeComponent, SavingComponent,
 RecapComponent, StatisticsComponent, StatisticByExpenseComponent, VariableChargeComponent,
-EnvelopeComponent, HistoryEnvelopeComponent],
+EnvelopeComponent, HistoryEnvelopeComponent, ReplaceEmpty],
   imports: [
     CommonModule,
     WidgetModule,

@@ -1132,7 +1132,7 @@ class BudgetController extends Controller
 
     public function deleteIncomeFromBudget(Request $request)
     {
-        Log::info('azertyui oui oui');
+       
         try {
             $budget_id = $request->budget_id;
             $id = $request->id;

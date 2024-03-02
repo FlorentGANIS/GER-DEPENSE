@@ -1,1 +1,77 @@
-<p>history-envelope works!</p>
+<!-- start page title -->
+<app-pagetitle title="Mouvement des enveloppes ({{ histories.length }})"
+    [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-sm-12">
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table ngxUiLoaderBlurred [loaderId]="'loader-spin'"
+                class="table table-striped align-middle datatable dt-responsive table-check nowrap datatables"
+                style="border-collapse: collapse; border-spacing: 0 8px; width: 100%;">
+
+                <thead>
+                    <tr>
+                        <th style="width: 10%">#</th>
+                        <td>De</td>
+                        <td>Vers</td>
+                        <th>Catégorie</th>
+                        <th>Type</th>
+                        <th>Montant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="histories?.length === 0">
+                        <tr>
+                            <td colspan="6">Aucun mouvement
+                                trouvé.</td>
+                        </tr>
+                    </ng-container>
+                    <tr
+                        *ngFor="let history of histories | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+                        <td>
+                            {{i + 1}}
+                        </td>
+
+                        <td>
+                            {{ history?.from_budget?.month?.label | replaceEmpty}}
+                        </td>
+
+                        <td>
+                            {{ history?.to_budget?.month?.label | replaceEmpty}}
+                        </td>
+                        <td>
+                            {{ history.category?.designation }}
+                        </td>
+
+                        <td
+                            [ngClass]="{'text-success': history?.type === 'Entrée', 'text-danger': history?.type === 'Sortie'}"
+                            style="font-weight: bold;">
+                            {{ history?.type }}
+                        </td>
+
+                        <td>
+                            {{history.env_amount | currency: 'XOF'}}
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+            <div class="pagination-style">
+                <pagination-controls previousLabel="Précédent"
+                    nextLabel="Suivant"
+                    (pageChange)="p = $event"></pagination-controls>
+
+            </div>
+
+            <ngx-ui-loader overlayColor="rgba(225,220,220,0.8)" [bgsOpacity]="3"
+                [loaderId]="'loader-spin'"></ngx-ui-loader>
+
+        </div>
+        <!-- End table -->
+
+    </div>
+</div>
