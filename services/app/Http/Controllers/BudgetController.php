@@ -44,6 +44,7 @@ class BudgetController extends Controller
                     if ($month->id == $budget['month_id']) {
                         $child['budget_id'] = $budget->id;
                         $child['status'] = $budget->status;
+                        $child['is_closed'] = $budget->is_closed;
                         $child['global_amount'] = $budget->global_amount;
                         $child['remaining_amount'] = $budget->remaining_amount;
                         $child['total_incomes'] = $budget->total_incomes;

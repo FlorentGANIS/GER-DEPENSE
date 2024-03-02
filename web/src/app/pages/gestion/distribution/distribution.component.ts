@@ -170,10 +170,11 @@ export class DistributionComponent implements OnInit {
       });
     }
 
-    this.update_price_dialog = false;
+    this.modalService.dismissAll();
+    this.price_update_form.reset();
   }
 
-  displayModalUpdPrice(stat: boolean, repartition: any) {
+  displayModalUpdPrice(contentModifPrice: any, stat: boolean, repartition: any ) {
     if (stat) {
       this.price_update_form.patchValue({
         category_id: [repartition.category_id],
@@ -182,9 +183,9 @@ export class DistributionComponent implements OnInit {
         rep_amount: [repartition.rep_amount]
       });
 
-      this.update_price_dialog = true;
+      this.modalService.open(contentModifPrice, { centered: true });
     } else {
-      this.update_price_dialog = false;
+      this.modalService.dismissAll();
       this.price_update_form.reset();
     }
   }
@@ -351,6 +352,8 @@ export class DistributionComponent implements OnInit {
     )
 
   }
+
+
 
 
 }
