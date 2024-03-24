@@ -118,6 +118,7 @@ export class RepartitionComponent implements OnInit{
             // Total des montants des répartitions
             this.global_reps_amount = v.data.repartitions_amount;
             // Montant restant à répartir
+            this.distribution_amount = this.budget?.remaining_amount;
             this.amount_to_distribute = this.budget?.remaining_amount;
             // Les répartitions
             this.reps = v.data.repartitions;
@@ -217,9 +218,10 @@ export class RepartitionComponent implements OnInit{
         // Init form
         this.category_form.reset();
         // Mise à jour du montant à distribuer
-        this.distribution_form.patchValue({
-          'distribution_amount': this.currencyPipe.transform(this.amount_to_distribute - this.temp_amount_to_distribute, 'XOF'),
-        });
+        // this.distribution_form.patchValue({
+        //   'distribution_amount': this.currencyPipe.transform(this.amount_to_distribute - this.temp_amount_to_distribute, 'XOF'),
+        // });
+        this.distribution_amount = this.amount_to_distribute - this.temp_amount_to_distribute;
         // Ajout dans le tableau des catégories déjà ajouter dans les items
         this.categories_already_seleted.push(element);
         // Suppression de cette catégorie ajoutée dans la liste des catégories à sélectionner
@@ -244,9 +246,10 @@ export class RepartitionComponent implements OnInit{
         // Retrait de la somme de la catégorie dans le montant à distribuer
         this.temp_amount_to_distribute -= category.rep_amount;
         // Mise à jour de la somme à afficher
-        this.distribution_form.patchValue({
-          'distribution_amount': this.currencyPipe.transform(this.amount_to_distribute - this.temp_amount_to_distribute, 'XOF'),
-        });
+        // this.distribution_form.patchValue({
+        //   'distribution_amount': this.currencyPipe.transform(this.amount_to_distribute - this.temp_amount_to_distribute, 'XOF'),
+        // });
+        this.distribution_amount = this.amount_to_distribute - this.temp_amount_to_distribute;
       }
 
 
@@ -265,9 +268,10 @@ export class RepartitionComponent implements OnInit{
           // Mise à jour de la somme des montants à répartir
           this.temp_amount_to_distribute += this.price_update_form.get('rep_amount')?.value;
           // Mise à jour de la somme à afficher
-          this.distribution_form.patchValue({
-            'distribution_amount': this.currencyPipe.transform(this.amount_to_distribute - this.temp_amount_to_distribute, 'XOF'),
-          });
+          // this.distribution_form.patchValue({
+          //   'distribution_amount': this.currencyPipe.transform(this.amount_to_distribute - this.temp_amount_to_distribute, 'XOF'),
+          // });
+          this.distribution_amount = this.amount_to_distribute - this.temp_amount_to_distribute;
         }
       });
     } else {
@@ -280,9 +284,10 @@ export class RepartitionComponent implements OnInit{
           this.global_reps_amount += this.price_update_form.get('rep_amount')?.value;
           // Mise à jour de la somme à afficher
           this.amount_to_distribute = this.budget?.global_amount - this.global_reps_amount;
-          this.distribution_form.patchValue({
-            'distribution_amount': this.currencyPipe.transform(this.amount_to_distribute, 'XOF'),
-          });
+          // this.distribution_form.patchValue({
+          //   'distribution_amount': this.currencyPipe.transform(this.amount_to_distribute, 'XOF'),
+          // });
+          this.distribution_amount = this.amount_to_distribute;
         }
       });
     }
@@ -324,6 +329,9 @@ export class RepartitionComponent implements OnInit{
           income_budget_label: income_label,
         };
         elt.rep_details.push(rep_detail_format);
+        this.content_detail_rep_form.controls['income_budget_id'].reset();
+        this.content_detail_rep_form.controls['rep_detail_amount'].reset();
+      
       }
     });
     console.log(this.items)
@@ -351,6 +359,51 @@ export class RepartitionComponent implements OnInit{
       this.category_form.reset();
     }
     
+  }
+
+  shareOut() {
+    this.is_processing_to_share = true;
+    this.distribution_form.patchValue({ 'remaining_amount': this.amount_to_distribute - this.temp_amount_to_distribute });
+
+    this.budget_service.shareOut({ distribution_form: this.distribution_form.value, items: this.items }).subscribe(
+      {
+        next: (v: any) => {
+          this.message = v.message;
+          if (v.status == 200) {
+            this.showSuccess(this.message);
+            this.is_processing_to_share = false;
+            setTimeout(() => {
+              this.router.navigate(['/gestion/budgets']);
+              this.distribution_form.reset();
+            }, 1000);
+
+          } else {
+            this.showError(this.message);
+            this.is_processing_to_share = false;
+          }
+        },
+
+        error: (e) => {
+          console.error(e);
+          this.message = 'Une erreur interne est survenue. Veuillez contacter l\'administrateur.';
+          this.showError(this.message);
+          this.is_processing_to_share = false;
+        },
+
+        complete: () => {
+
+        }
+      }
+    )
+
+  }
+
+  showSuccess(msg: string) {
+    this.toastr.success("Succès", msg)
+  }
+
+  showError(msg: string) {
+    this.toastr.error("Echec", msg)
   }
 
   openForm() {

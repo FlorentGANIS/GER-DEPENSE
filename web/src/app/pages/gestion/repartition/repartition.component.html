@@ -24,7 +24,7 @@
                                 BUDGETISE
                                 <span
                                     class="badge text-bg-info float-end bg-opacity-100 p-1 m-1 font-size-13"
-                                    title>{{ amount_to_distribute | currency:
+                                    title>{{ distribution_amount | currency:
                                     'XOF'}}</span>
                                 <span
                                     class="badge text-bg-success float-end bg-opacity-100 p-1 m-1 font-size-13"
@@ -93,7 +93,7 @@
                                 <td>{{item.rep_name}}</td>
                                 <td><button type="button"
                                         (click)="displayDetailRepartition(contentDetailRepartition, true, item)"
-                                        class="btn btn-secondary btn-sm waves-effect waves-light">Affecter</button></td>
+                                        class="btn btn-secondary btn-sm waves-effect waves-light">Affecter</button><span *ngIf="item.rep_details.length == 0">AT</span></td>
                                 <td>{{item.rep_amount | currency:
                                     'XOF'}}</td>
                                 <td>
