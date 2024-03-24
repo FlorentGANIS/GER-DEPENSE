@@ -3,6 +3,7 @@
     [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
 <!-- end page title -->
 
+<!-- Formulaire de création -->
 <div class="row" *ngIf="display_form">
     <div class="col-lg-12">
         <div class="card">
@@ -16,6 +17,14 @@
 
             </div>
             <div class="card-body p-4">
+                <div class="row mb-2">
+                    <div class="col-md-12 text-center mb-2">
+                        <span class="bx bx-info-circle pull-right"></span><i
+                            class="text-danger">Vous devez sélectionner toutes vos sources de revenus avant d'enregistrer le budget. <br>
+                        Le bouton viloet <b>"Ajouter un revenu"</b> à gauche vous permet d'ajouter un ou plusieurs revenu(s) supplémentaire(s) au budget.</i>
+                    </div>
+                </div>
+                
 
                 <div class="row">
                     <div class="col-lg-12">
@@ -23,6 +32,13 @@
                             <form class="row gx-3 gy-2 align-items-center"
                                 novalidate
                                 [formGroup]="budget_form">
+
+                                <div class="mt-2 mb-2 form-check">
+                                    <input class="form-check-input" type="checkbox" id="is_break_down" formControlName="is_break_down">
+                                    <label class="form-check-label" for="formCheck2">
+                                        Décomposer le montant des charges suivant les sources de revenus lors de la répartition.
+                                    </label>
+                                </div> 
 
                                 <ng-container formArrayName="incomes"
                                     *ngFor="let income of incomesList.controls; let i = index">
@@ -68,7 +84,7 @@
 
                                 <div class="mt-5 mb-3">
                                     <button type="submit" (click)="addIncome()"
-                                        class="btn btn-primary w-md">Ajouter
+                                        class="btn btn-primary w-md">Ajouter un
                                         revenu</button>
                                 </div>
 
@@ -341,9 +357,10 @@
                 </div>
 
                 <div class="btn-group" role="group">
-                    <button type="button" *ngIf="budget?.status && !budget?.is_closed"
+                    <button type="button"
+                        *ngIf="budget?.status && !budget?.is_closed"
                         title="Répartir le budget"
-                        [routerLink]="['/gestion/distribution/budget', budget?.budget_id]"
+                        [routerLink]="['/gestion/repartition/budget', budget?.budget_id]"
                         class="btn btn-outline-secondary text-truncate"><i
                             class="uil uil-user me-1"></i>
                         Répartir</button>

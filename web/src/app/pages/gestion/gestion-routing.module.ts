@@ -14,6 +14,7 @@ import { StatisticByExpenseComponent } from './statistic-by-expense/statistic-by
 import { RecapComponent } from './recap/recap.component';
 import { EnvelopeComponent } from './envelope/envelope.component';
 import { HistoryEnvelopeComponent } from './history-envelope/history-envelope.component';
+import { RepartitionComponent } from './repartition/repartition.component';
 
 const routes = [
   {
@@ -28,6 +29,7 @@ const routes = [
   { path: 'detail-budget/:id', component: DetailBudgetComponent },
   //{ path: 'maj-budget/:id', component: UpdateBudgetComponent },
   { path: 'distribution/budget/:id', component: DistributionComponent },
+  { path: 'repartition/budget/:id', component: RepartitionComponent },
   { path: 'depenses', component: ExpenseComponent },
   { path: 'stat/statistique-par-previsions', component: StatisticsComponent },
   { path: 'stat/statistique-par-depenses', component: StatisticByExpenseComponent },

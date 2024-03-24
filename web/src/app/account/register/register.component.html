@@ -66,7 +66,7 @@
 
                                     <!-- Code de vérification -->
 
-                                    <ng-container
+                                    <ng-container class="mt-3"
                                         *ngIf="email_sent && display_confirmation">
                                         <div class="mb-3">
                                             <label for="code_verification">Code
@@ -76,7 +76,7 @@
                                                 class="form-control"
                                                 id="code_verification"
                                                 [ngClass]="{'is-invalid': register_form.get('code_verification')?.touched && !register_form.get('code_verification')?.valid}"
-                                                placeholder="Entrer l'adresse mail">
+                                                placeholder="Entrer le code de vérification">
                                             @if(register_form.get('code_verification')?.touched
                                             &&
                                             !register_form.get('code_verification')?.valid){
@@ -117,7 +117,7 @@
                                                 class="form-control"
                                                 id="last_name"
                                                 [ngClass]="{'is-invalid': register_form.get('last_name')?.touched && !register_form.get('last_name')?.valid}"
-                                                placeholder="Entrer l'adresse mail">
+                                                placeholder="Entrer votre nom de famille">
                                             @if(register_form.get('last_name')?.touched
                                             &&
                                             !register_form.get('last_name')?.valid){
@@ -149,13 +149,13 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <label for="first_name">Nom</label>
+                                            <label for="first_name">Prénom</label>
                                             <input type="text"
                                                 formControlName="first_name"
                                                 class="form-control"
                                                 id="first_name"
                                                 [ngClass]="{'is-invalid': register_form.get('first_name')?.touched && !register_form.get('first_name')?.valid}"
-                                                placeholder="Entrer l'adresse mail">
+                                                placeholder="Entrer votre prénom">
                                             @if(register_form.get('first_name')?.touched
                                             &&
                                             !register_form.get('first_name')?.valid){

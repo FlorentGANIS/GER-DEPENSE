@@ -28,6 +28,8 @@ import { EnvelopeComponent } from './envelope/envelope.component';
 import { HistoryEnvelopeComponent } from './history-envelope/history-envelope.component';
 import { ReplaceEmpty } from 'src/app/shared/pipes/replace-empty.pipe';
 import { UrlPipe } from 'src/app/shared/pipes/url.pipe';
+import { RepartitionComponent } from './repartition/repartition.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 
 
@@ -35,7 +37,7 @@ import { UrlPipe } from 'src/app/shared/pipes/url.pipe';
   declarations: [DashboardComponent, BudgetComponent, DetailBudgetComponent,
   DistributionComponent, ExpenseComponent, FixedChargeComponent, IncomeComponent, SavingComponent,
 RecapComponent, StatisticsComponent, StatisticByExpenseComponent, VariableChargeComponent,
-EnvelopeComponent, HistoryEnvelopeComponent, ReplaceEmpty, UrlPipe],
+EnvelopeComponent, HistoryEnvelopeComponent, ReplaceEmpty, UrlPipe, RepartitionComponent],
   imports: [
     CommonModule,
     WidgetModule,
@@ -60,7 +62,8 @@ EnvelopeComponent, HistoryEnvelopeComponent, ReplaceEmpty, UrlPipe],
     NgbToastModule,
     NgbAlertModule,
     NgxPaginationModule,
-    NgxUiLoaderModule
+    NgxUiLoaderModule,
+    NgSelectModule
   ],
   providers: [CurrencyPipe]
 })

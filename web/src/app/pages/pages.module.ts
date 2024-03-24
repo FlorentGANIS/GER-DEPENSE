@@ -25,8 +25,6 @@ import { ChartModule } from './chart/chart.module';
 
 import { PagesRoutingModule } from './pages-routing.module';
 
-import { DashboardComponent } from './gestion/dashboard/dashboard.component';
-
 @NgModule({
   declarations: [
     
@@ -53,7 +51,8 @@ import { DashboardComponent } from './gestion/dashboard/dashboard.component';
     FormModule,
     TablesModule,
     ChartModule,
-    LeafletModule
+    LeafletModule,
+    
   ],
   schemas:[CUSTOM_ELEMENTS_SCHEMA]
 })

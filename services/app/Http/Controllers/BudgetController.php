@@ -313,6 +313,9 @@ class BudgetController extends Controller
                 $total += $value->fixed_amount;
             }
             $data['total'] = $total;
+
+            $data['incomes_budget'] = IncomeBudget::with(['income', 'budget'])->where('budget_id', $id)->where('create_id', getUserId())->get();
+            
             return response()->json([
                 'data' => $data,
                 'message' => 'Détails',

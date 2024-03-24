@@ -117,6 +117,7 @@
                 [formGroup]="distribution_form">
                 <div class="card-body">
                     <div class="row align-items-center">
+
                         <div class="col-md-4">
                             <div class="mb-1">
                                 <label class="form-label font-size-18"
@@ -146,8 +147,7 @@
                         </div>
 
                         <div class="col-md-2">
-                            <div class="mb-1">
-
+                            <div class="mb-2">
                                 <button type="button"
                                     (click)="displayModal(content, true)"
                                     class="btn btn-primary waves-effect waves-light"><i
@@ -164,12 +164,14 @@
                         <table class="table mb-0">
 
                             <thead class="table-light">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Type</th>
-                                    <th>Catégorie</th>
-                                    <th>Montant</th>
-                                    <th style="width: 20%;">Actions</th>
+                                <tr style="height: auto;">
+                                    <th style="width: 5%;">#</th>
+                                    <th style="width: 15%;">Type</th>
+                                    <th style="width: 35%;">Catégorie</th>
+                                    <th style="width: 10%;">Affectation
+                                        (Facultatif)</th>
+                                    <th style="width: 15%;">Montant</th>
+                                    <th style="width: 15%;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -183,182 +185,272 @@
                                     <th scope="row">{{ i + 1 }}</th>
                                     <td>CHARGE {{item.rep_type}}</td>
                                     <td>{{item.rep_name}}</td>
+                                    <td><button type="button"
+                                            (click)="displayDetailRepartition(contentDetailRepartition, true)"
+                                            class="btn btn-secondary btn-sm waves-effect waves-light">Affecter</button></td>
                                     <td>{{item.rep_amount | currency:
                                         'XOF'}}</td>
-                                    <td> <button type="button"
+                                    <td>
+                                        <button type="button"
                                             *ngIf="item.rep_type != 'FIXE'"
                                             (click)="displayModalUpdPrice(contentModifPrice, true, item)"
                                             style="margin-right: 2%;"
-                                            class="btn btn-warning waves-effect waves-light">Modifier</button>
+                                            class="btn btn-warning btn-sm waves-effect waves-light">Modifier</button>
 
                                         <button type="button"
                                             *ngIf="item.rep_type != 'FIXE'"
                                             (click)="removeCategory(item, i)"
-                                            class="btn btn-danger waves-effect waves-light">Retirer</button></td>
-                                </tr>
+                                            class="btn btn-danger btn-sm waves-effect waves-light">Retirer</button>
 
-                            </tbody>
-                        </table>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                <div class="text-end mt-5">
-                    <button
-                        class="btn btn-success waves-effect waves-light"
-                        type="submit" style="margin-right: 10px !important;"
-                        [disabled]="is_processing_to_share || (amount_to_distribute - temp_amount_to_distribute) < 0 || global_amount <= 0 || amount_to_distribute == 0">{{
-                        label_button }}</button>
-                    <button type="button"
-                        (click)="closeForm()"
-                        class="btn btn-danger waves-effect waves-light">Annuler</button>
+                    <div class="text-end mt-5">
+                        <button
+                            class="btn btn-success waves-effect waves-light"
+                            type="submit" style="margin-right: 10px !important;"
+                            [disabled]="is_processing_to_share || (amount_to_distribute - temp_amount_to_distribute) < 0 || global_amount <= 0 || amount_to_distribute == 0">{{
+                            label_button }}</button>
+                        <button type="button"
+                            (click)="closeForm()"
+                            class="btn btn-danger waves-effect waves-light">Annuler</button>
 
-                </div>
-            </form>
+                    </div>
+                </form>
 
-            <!-- end card body -->
+                <!-- end card body -->
+            </div>
+            <!-- end card -->
         </div>
-        <!-- end card -->
-    </div>
 
-    <ng-template #content role="document" let-modal>
-        <div class="modal-header">
-            <!-- <div *ngIf="is_processing"
+        <ng-template #content role="document" let-modal>
+            <div class="modal-header">
+                <!-- <div *ngIf="is_processing"
             class="spinner-border text-primary m-1" role="status">
             <span class="sr-only">Loading...</span>
         </div> -->
-            <h5 class="modal-title mt-0">Ajout d'une charge</h5>
-            <button type="button" class="btn-close" aria-hidden="true"
-                (click)="modal.dismiss('Cross click')"></button>
-        </div>
-        <div class="modal-body">
-            <form novalidate
-                [formGroup]="category_form">
-                <div class="row">
+                <h5 class="modal-title mt-0">Ajout d'une charge</h5>
+                <button type="button" class="btn-close" aria-hidden="true"
+                    (click)="modal.dismiss('Cross click')"></button>
+            </div>
+            <div class="modal-body">
+                <form novalidate
+                    [formGroup]="category_form">
+                    <div class="row">
 
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label class="control-label">Charge
-                                <span
-                                    class="required_color">*</span></label>
-                            <select
-                                class="form-control form-select"
-                                formControlName="category_id"
-                                [ngClass]="{'is-invalid': category_form.get('category_id')?.touched && !category_form.get('category_id')?.valid}">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="control-label">Charge
+                                    <span
+                                        class="required_color">*</span></label>
+                                <select
+                                    class="form-control form-select"
+                                    formControlName="category_id"
+                                    [ngClass]="{'is-invalid': category_form.get('category_id')?.touched && !category_form.get('category_id')?.valid}">
 
-                                <option *ngFor="let item of categories"
-                                    value="{{item.category_id}}">{{item.rep_name}}</option>
-                            </select>
+                                    <option *ngFor="let item of categories"
+                                        value="{{item.category_id}}">{{item.rep_name}}</option>
+                                </select>
 
-                            @if(category_form.get('category_id')?.touched &&
-                            !category_form.get('category_id')?.valid){
-                            <div class="invalid-feedback">
-                                @if(category_form.get('category_id')?.touched
-                                &&
-                                category_form.get('category_id')?.hasError('required')){
-                                <span>La charge est
-                                    requise.</span>}
-                            </div>}
+                                @if(category_form.get('category_id')?.touched &&
+                                !category_form.get('category_id')?.valid){
+                                <div class="invalid-feedback">
+                                    @if(category_form.get('category_id')?.touched
+                                    &&
+                                    category_form.get('category_id')?.hasError('required')){
+                                    <span>La charge est
+                                        requise.</span>}
+                                </div>}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="control-label">Montant
+                                    <span
+                                        class="required_color">*</span></label>
+                                <input class="form-control"
+                                    placeholder="Entrer le montant"
+                                    type="number"
+                                    formControlName="rep_amount"
+                                    [ngClass]="{'is-invalid': category_form.get('rep_amount')?.touched && !category_form.get('rep_amount')?.valid}" />
+
+                                @if(category_form.get('rep_amount')?.touched &&
+                                !category_form.get('rep_amount')?.valid){
+                                <div class="invalid-feedback">
+                                    @if(category_form.get('rep_amount')?.touched
+                                    &&
+                                    category_form.get('rep_amount')?.hasError('required')){
+                                    <span>Le montant de la charge est
+                                        requis.</span>}
+
+                                </div>}
+                            </div>
+
                         </div>
-
-                        <div class="mb-3">
-                            <label class="control-label">Montant
-                                <span
-                                    class="required_color">*</span></label>
-                            <input class="form-control"
-                                placeholder="Entrer le montant"
-                                type="number"
-                                formControlName="rep_amount"
-                                [ngClass]="{'is-invalid': category_form.get('rep_amount')?.touched && !category_form.get('rep_amount')?.valid}" />
-
-                            @if(category_form.get('rep_amount')?.touched &&
-                            !category_form.get('rep_amount')?.valid){
-                            <div class="invalid-feedback">
-                                @if(category_form.get('rep_amount')?.touched
-                                &&
-                                category_form.get('rep_amount')?.hasError('required')){
-                                <span>Le montant de la charge est
-                                    requis.</span>}
-
-                            </div>}
-                        </div>
-
                     </div>
-                </div>
-                <div class="text-end ">
-                    <button type="button" (click)="displayModal(content, false)"
-                        style="margin-right: 10px !important;"
-                        class="btn btn-danger waves-effect waves-light">Annuler</button>
-                    <button type="submit" (click)="addCategory()"
-                        class="btn btn-success waves-effect waves-light"
-                        [disabled]="!category_form.valid || !is_processing_to_add || (amount_to_distribute - temp_amount_to_distribute) < 0">Ajouter</button>
-                </div>
-            </form>
-        </div>
-    </ng-template>
+                    <div class="text-end ">
+                        <button type="button"
+                            (click)="displayModal(content, false)"
+                            style="margin-right: 10px !important;"
+                            class="btn btn-danger waves-effect waves-light">Annuler</button>
+                        <button type="submit" (click)="addCategory()"
+                            class="btn btn-success waves-effect waves-light"
+                            [disabled]="!category_form.valid || !is_processing_to_add || (amount_to_distribute - temp_amount_to_distribute) < 0">Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </ng-template>
 
-    <!-- Modification prix lors de la répartition -->
-    <ng-template #contentModifPrice role="document" let-modal>
-        <div class="modal-header">
-            <!-- <div *ngIf="is_processing"
+        <!-- Modification prix lors de la répartition -->
+        <ng-template #contentModifPrice role="document" let-modal>
+            <div class="modal-header">
+                <!-- <div *ngIf="is_processing"
             class="spinner-border text-primary m-1" role="status">
             <span class="sr-only">Loading...</span>
         </div> -->
-            <h5 class="modal-title mt-0">Modification d'un prix</h5>
-            <button type="button" class="btn-close" aria-hidden="true"
-                (click)="modal.dismiss('Cross click')"></button>
-        </div>
-        <div class="modal-body">
-            <form novalidate
-                [formGroup]="price_update_form">
-                <div class="row">
+                <h5 class="modal-title mt-0">Modification d'un prix</h5>
+                <button type="button" class="btn-close" aria-hidden="true"
+                    (click)="modal.dismiss('Cross click')"></button>
+            </div>
+            <div class="modal-body">
+                <form novalidate
+                    [formGroup]="price_update_form">
+                    <div class="row">
 
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <input type="hidden"
-                                formControlName="category_id" />
-                            <input type="hidden"
-                                formControlName="old_rep_amount" />
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <input type="hidden"
+                                    formControlName="category_id" />
+                                <input type="hidden"
+                                    formControlName="old_rep_amount" />
 
-                            <label class="control-label">Charge
-                                <span
-                                    class="required_color">*</span></label>
-                            <input type="text" formControlName="designation"
-                                class="form-control" readonly />
+                                <label class="control-label">Charge
+                                    <span
+                                        class="required_color">*</span></label>
+                                <input type="text" formControlName="designation"
+                                    class="form-control" readonly />
 
-                        </div>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="control-label">Montant
-                                <span
-                                    class="required_color">*</span></label>
-                            <input class="form-control"
-                                placeholder="Entrer le montant"
-                                type="number"
-                                formControlName="rep_amount"
-                                [ngClass]="{'is-invalid': price_update_form.get('rep_amount')?.touched && !price_update_form.get('rep_amount')?.valid}" />
+                            <div class="mb-3">
+                                <label class="control-label">Montant
+                                    <span
+                                        class="required_color">*</span></label>
+                                <input class="form-control"
+                                    placeholder="Entrer le montant"
+                                    type="number"
+                                    formControlName="rep_amount"
+                                    [ngClass]="{'is-invalid': price_update_form.get('rep_amount')?.touched && !price_update_form.get('rep_amount')?.valid}" />
 
-                            @if(price_update_form.get('rep_amount')?.touched &&
-                            !price_update_form.get('rep_amount')?.valid){
-                            <div class="invalid-feedback">
                                 @if(price_update_form.get('rep_amount')?.touched
                                 &&
-                                price_update_form.get('rep_amount')?.hasError('required')){
-                                <span>Le montant de la charge est
-                                    requis.</span>}
+                                !price_update_form.get('rep_amount')?.valid){
+                                <div class="invalid-feedback">
+                                    @if(price_update_form.get('rep_amount')?.touched
+                                    &&
+                                    price_update_form.get('rep_amount')?.hasError('required')){
+                                    <span>Le montant de la charge est
+                                        requis.</span>}
 
-                            </div>}
+                                </div>}
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="text-end ">
+                        <button type="button"
+                            (click)="displayModal(content, false)"
+                            style="margin-right: 10px !important;"
+                            class="btn btn-danger waves-effect waves-light">Annuler</button>
+                        <button type="submit" (click)="updateAmount()"
+                            class="btn btn-success waves-effect waves-light"
+                            [disabled]="!price_update_form.valid">Modifier</button>
+                    </div>
+                </form>
+            </div>
+        </ng-template>
+
+        <!-- Détails de répartition -->
+
+        <!-- Modification prix lors de la répartition -->
+        <ng-template #contentDetailRepartition role="document" let-modal>
+            <div class="modal-header">
+                <!-- <div *ngIf="is_processing"
+                class="spinner-border text-primary m-1" role="status">
+                <span class="sr-only">Loading...</span>
+            </div> -->
+                <h5 class="modal-title mt-0">Détails de répartition</h5>
+                <button type="button" class="btn-close" aria-hidden="true"
+                    (click)="modal.dismiss('Cross click')"></button>
+            </div>
+            <div class="modal-body">
+                <form novalidate>
+                    <div class="row">
+
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <input type="hidden"
+                                    formControlName="category_id" />
+                                <input type="hidden"
+                                    formControlName="old_rep_amount" />
+
+                                <label class="control-label">Charge
+                                    <span
+                                        class="required_color">*</span></label>
+                                <input type="text" formControlName="designation"
+                                    class="form-control" readonly />
+
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="control-label">Montant
+                                    <span
+                                        class="required_color">*</span></label>
+                                <input class="form-control"
+                                    placeholder="Entrer le montant"
+                                    type="number"
+                                    formControlName="rep_detail_amount"
+                                    [ngClass]="{'is-invalid': price_update_form.get('rep_amount')?.touched && !price_update_form.get('rep_amount')?.valid}" />
+
+                                <!-- @if(price_update_form.get('rep_amount')?.touched
+                                    &&
+                                    !price_update_form.get('rep_amount')?.valid){
+                                    <div class="invalid-feedback">
+                                        @if(price_update_form.get('rep_amount')?.touched
+                                        &&
+                                        price_update_form.get('rep_amount')?.hasError('required')){
+                                        <span>Le montant de la charge est
+                                            requis.</span>}
+    
+                                    </div>} -->
+                            </div>
+
+                            <div class="text-end ">
+                                <button type="button"
+                                    (click)="displayModal(content, false)"
+                                    style="margin-right: 10px !important;"
+                                    class="btn btn-danger waves-effect waves-light">Annuler</button>
+                                <button type="button"
+                                    class="btn btn-success waves-effect waves-light">Ajouter</button>
+                            </div>
+
                         </div>
 
+                        <div class="col-6">
+                            <!-- <ng-container>
+                                    <a *ngFor="let balance of studentBalances | paginate: {itemsPerPage: 5, currentPage: p2 }; let i = index;"
+                                      href="javascript:void(0);"
+                                      class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2">TEST
+                                      <span class="badge text-bg-success float-end bg-opacity-100 p-1 m-1"
+                                        title="">15 000</span>
+                                    </a>
+                                  </ng-container> -->
+                        </div>
                     </div>
-                </div>
-                <div class="text-end ">
-                    <button type="button" (click)="displayModal(content, false)"
-                        style="margin-right: 10px !important;"
-                        class="btn btn-danger waves-effect waves-light">Annuler</button>
-                    <button type="submit" (click)="updateAmount()"
-                        class="btn btn-success waves-effect waves-light"
-                        [disabled]="!price_update_form.valid">Modifier</button>
-                </div>
-            </form>
-        </div>
-    </ng-template>
+
+                </form>
+            </div>
+        </ng-template>

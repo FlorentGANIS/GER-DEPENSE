@@ -37,6 +37,7 @@ export class BudgetComponent implements OnInit{
 
     this.budget_form = this.fb.group({
       id: [''],
+      is_break_down: [true],
       incomes: this.fb.array([this.createIncomesGroup()])
     });
 
@@ -113,40 +114,41 @@ export class BudgetComponent implements OnInit{
 
 
 
-  saveBudget() {    
-    this.is_processing = true;
-    this.is_loading = true;
-    this.budget_service.create({ form: this.budget_form.value, month: this.curr_month }).subscribe(
-      {
-        next: (v: any) => {
-          this.message = v.message;
-          if (v.status == 200) {
-            this.budget_form.reset();
-            this.showSuccess(this.message);
-            this.listBudgets();
-            this.display_form = false;
-            this.is_processing = false;
-            this.is_loading = false;
-          } else {
-            this.showError(this.message);
-            this.is_processing = false;
-            this.is_loading = false;
-          }
-        },
+  saveBudget() {   
+    console.log(this.budget_form.value) 
+    // this.is_processing = true;
+    // this.is_loading = true;
+    // this.budget_service.create({ form: this.budget_form.value, month: this.curr_month }).subscribe(
+    //   {
+    //     next: (v: any) => {
+    //       this.message = v.message;
+    //       if (v.status == 200) {
+    //         this.budget_form.reset();
+    //         this.showSuccess(this.message);
+    //         this.listBudgets();
+    //         this.display_form = false;
+    //         this.is_processing = false;
+    //         this.is_loading = false;
+    //       } else {
+    //         this.showError(this.message);
+    //         this.is_processing = false;
+    //         this.is_loading = false;
+    //       }
+    //     },
 
-        error: (e) => {
-          console.error(e);
-          this.message = 'Une erreur interne est survenue. Veuillez contacter l\'administrateur.';
-          this.showError(this.message);
-          this.is_processing = false;
-          this.is_loading = false;
-        },
+    //     error: (e) => {
+    //       console.error(e);
+    //       this.message = 'Une erreur interne est survenue. Veuillez contacter l\'administrateur.';
+    //       this.showError(this.message);
+    //       this.is_processing = false;
+    //       this.is_loading = false;
+    //     },
 
-        complete: () => {
+    //     complete: () => {
 
-        }
-      }
-    )
+    //     }
+    //   }
+    // )
 
   }
 
